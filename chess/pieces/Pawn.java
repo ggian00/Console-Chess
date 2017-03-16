@@ -17,6 +17,11 @@ public class Pawn extends Piece {
 	 * @return mobility of game piece.
 	 */
 	public int[][] getMobility(){
+		
+		/*
+		 * note that this currently ignore array out of bounds exceptions
+		 */
+		
 		int mobility[][] = new int[8][8];
 		
 		// Pawn can move two down/up if not moved yet
