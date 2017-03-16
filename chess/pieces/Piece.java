@@ -3,7 +3,7 @@ import java.awt.Point;
 
 public abstract class Piece {
 
-	char color;
+	private char color;
 	Point location;
 	
 	Piece(char color){

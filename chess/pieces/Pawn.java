@@ -28,7 +28,7 @@ public class Pawn extends Piece {
 		// One down/up all the time
 		// And can capture in any down/up diagonal
 		// down/up is dependent upon color
-		int orientation = (this.color == 'w' ? 1 : -1 ); //sets up down mobility 1 for up, -1 for down
+		int orientation = (this.getColor() == 'w' ? 1 : -1 ); //sets up down mobility 1 for up, -1 for down
 		
 		int currX = this.location.x;
 		int currY = this.location.y;
