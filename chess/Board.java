@@ -225,7 +225,34 @@ public class Board {
 		return null;
 	}
 
-	public static boolean inStalemate(Piece[][] board) {
+	private boolean existValidMoves() {
+		for (Piece p : whitePieces) {
+			int[][] mobility = p.getMobility();
+			for (int x = 0; x < 8; x++) {
+				for (int y = 0; y < 8; y++) {
+					if (mobility[x][y] != 0) {
+						return true;
+					}
+				}
+			}
+		}
+		for (Piece p : blackPieces) {
+			int[][] mobility = p.getMobility();
+			for (int x = 0; x < 8; x++) {
+				for (int y = 0; y < 8; y++) {
+					if (mobility[x][y] != 0) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean inStalemate(Piece[][] board) {
+		if ((inCheck() == ' ') && !existValidMoves()) {
+			return true;
+		}
 		return false;
 	}
 
