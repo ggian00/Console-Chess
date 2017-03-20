@@ -2,8 +2,27 @@ package pieces;
 
 public class Rook extends Piece {
 
-	Rook(char color) {
+	public Rook(char color) {
 		super(color);
+	}
+
+	@Override
+	public int[][] getMobility() {
+		int mobility[][] = new int[8][8];
+
+		int currX = this.location.x;
+		int currY = this.location.y;
+
+		for (int y = 0; y < 8; y++) {
+			mobility[currX][y] = 2;
+		}
+		for (int x = 0; x < 8; x++) {
+			mobility[x][currY] = 2;
+		}
+
+		mobility[currX][currY] = 0;
+
+		return mobility;
 	}
 
 	public String toString() {
