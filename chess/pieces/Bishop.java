@@ -1,9 +1,11 @@
 package pieces;
 
+import java.awt.Point;
+
 public class Bishop extends Piece {
 
-	public Bishop(char color) {
-		super(color);
+	public Bishop(char color, Point location) {
+		super(color, location);
 	}
 
 	public String toString() {

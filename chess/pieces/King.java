@@ -1,9 +1,11 @@
 package pieces;
 
+import java.awt.Point;
+
 public class King extends Piece {
 
-	public King(char color) {
-		super(color);
+	public King(char color, Point location) {
+		super(color, location);
 	}
 
 	/**

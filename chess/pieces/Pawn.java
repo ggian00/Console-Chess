@@ -1,9 +1,11 @@
 package pieces;
 
+import java.awt.Point;
+
 public class Pawn extends Piece {
 
-	public Pawn(char color) {
-		super(color);
+	public Pawn(char color, Point location) {
+		super(color, location);
 	}
 
 	/**

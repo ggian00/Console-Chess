@@ -1,9 +1,11 @@
 package pieces;
 
+import java.awt.Point;
+
 public class Queen extends Piece {
 
-	public Queen(char color) {
-		super(color);
+	public Queen(char color, Point location) {
+		super(color, location);
 	}
 
 	@Override

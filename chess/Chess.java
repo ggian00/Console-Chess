@@ -41,24 +41,21 @@ public class Chess {
 
 	private static void mobilityTestSuite() {
 		// Pawn
-		Piece testPawn = new Pawn('b');
-		testPawn.location = new Point(4, 6);
+		Piece testPawn = new Pawn('b', new Point(4, 6));
 		int[][] testmobpawn = testPawn.getMobility();
 		testmobpawn[(int) testPawn.location.getX()][(int) testPawn.location.getY()] = 5;
 		System.out.println("Testing Pawn mobility at " + testPawn.location.getX() + " " + testPawn.location.getY());
 		printMobility(testmobpawn);
 
 		// Rook
-		Piece testRook = new Rook('b');
-		testRook.location = new Point(3, 6);
+		Piece testRook = new Rook('b', new Point(3, 6));
 		int[][] testmobrook = testRook.getMobility();
 		testmobrook[(int) testRook.location.getX()][(int) testRook.location.getY()] = 5;
 		System.out.println("Testing Rook mobility at " + testRook.location.getX() + " " + testRook.location.getY());
 		printMobility(testmobrook);
 
 		// Knight
-		Piece testKnight = new Knight('b');
-		testKnight.location = new Point(3, 7);
+		Piece testKnight = new Knight('b', new Point(3, 7));
 		int[][] testmobknight = testKnight.getMobility();
 		testmobknight[(int) testKnight.location.getX()][(int) testKnight.location.getY()] = 5;
 		System.out
@@ -66,8 +63,7 @@ public class Chess {
 		printMobility(testmobknight);
 
 		// Bishop
-		Piece testBishop = new Bishop('w');
-		testBishop.location = new Point(5, 3);
+		Piece testBishop = new Bishop('w', new Point(5, 3));
 		int[][] testmobbish = testBishop.getMobility();
 		testmobbish[(int) testBishop.location.getX()][(int) testBishop.location.getY()] = 5;
 		System.out
@@ -75,16 +71,14 @@ public class Chess {
 		printMobility(testmobbish);
 
 		// Queen
-		Piece testQueen = new Queen('b');
-		testQueen.location = new Point(3, 6);
+		Piece testQueen = new Queen('b', new Point(3, 6));
 		int[][] testmobqueen = testQueen.getMobility();
 		testmobqueen[(int) testQueen.location.getX()][(int) testQueen.location.getY()] = 5;
 		System.out.println("Testing Queen mobility at " + testQueen.location.getX() + " " + testQueen.location.getY());
 		printMobility(testmobqueen);
 
 		// King
-		Piece testKing = new King('b');
-		testKing.location = new Point(3, 7);
+		Piece testKing = new King('b', new Point(3, 7));
 		int[][] testmobking = testKing.getMobility();
 		testmobking[(int) testKing.location.getX()][(int) testKing.location.getY()] = 5;
 		System.out.println("Testing King mobility at " + testKing.location.getX() + " " + testKing.location.getY());

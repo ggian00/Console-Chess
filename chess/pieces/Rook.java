@@ -1,9 +1,11 @@
 package pieces;
 
+import java.awt.Point;
+
 public class Rook extends Piece {
 
-	public Rook(char color) {
-		super(color);
+	public Rook(char color, Point location) {
+		super(color, location);
 	}
 
 	@Override

@@ -7,12 +7,17 @@ public abstract class Piece {
 	private char color;
 	public Point location;
 
-	Piece(char color) {
+	Piece(char color, Point location) {
 		if (color != 'w' || color != 'b') {
 			// throw exception
 			// error
 		}
+		if (location.getX() > 7 && location.getX() < 0 && location.getY() > 7 && location.getY() < 0) {
+			// throw exception
+			// error
+		}
 		this.color = color;
+		this.location = location;
 	}
 
 	/**

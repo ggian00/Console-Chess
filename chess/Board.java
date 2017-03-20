@@ -1,16 +1,23 @@
 import java.awt.Point;
+import java.util.ArrayList;
 
+import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
+import pieces.Pawn;
 import pieces.Piece;
+import pieces.Queen;
+import pieces.Rook;
 
 public class Board {
 
 	Piece[][] board = new Piece[8][8];
+	ArrayList<Piece> whitePieces = new ArrayList<Piece>(16);
+	ArrayList<Piece> blackPieces = new ArrayList<Piece>(16);
 	private char turn = 'w';
 
 	Board() {
-
+		initializeBoard();
 	}
 
 	public boolean movePiece(Point piecePos, Point targetPos) {
@@ -189,6 +196,46 @@ public class Board {
 
 	public static boolean inStalemate(Piece[][] board) {
 		return false;
+	}
+
+	private void initializeBoard() {
+		board[7][0] = new Rook('b', new Point(7, 0));
+		board[7][1] = new Knight('b', new Point(7, 1));
+		board[7][2] = new Bishop('b', new Point(7, 2));
+		board[7][3] = new Queen('b', new Point(7, 3));
+		board[7][4] = new King('b', new Point(7, 4));
+		board[7][5] = new Bishop('b', new Point(7, 5));
+		board[7][6] = new Knight('b', new Point(7, 6));
+		board[7][7] = new Rook('b', new Point(7, 7));
+
+		for (int i = 0; i < 8; i++) {
+			board[6][i] = new Pawn('b', new Point(6, i));
+		}
+
+		for (int x = 7; x >= 6; x--) {
+			for (int y = 0; y < 8; y++) {
+				blackPieces.add(board[x][y]);
+			}
+		}
+
+		for (int i = 0; i < 8; i++) {
+			board[1][i] = new Pawn('w', new Point(1, i));
+		}
+
+		board[0][0] = new Rook('w', new Point(0, 0));
+		board[0][1] = new Knight('w', new Point(0, 1));
+		board[0][2] = new Bishop('w', new Point(0, 2));
+		board[0][3] = new Queen('w', new Point(0, 3));
+		board[0][4] = new King('w', new Point(0, 4));
+		board[0][5] = new Bishop('w', new Point(0, 5));
+		board[0][6] = new Knight('w', new Point(0, 6));
+		board[0][7] = new Rook('w', new Point(0, 7));
+
+		for (int x = 0; x < 2; x++) {
+			for (int y = 0; y < 8; y++) {
+				whitePieces.add(board[x][y]);
+			}
+		}
 	}
 
 }
