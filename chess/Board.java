@@ -190,8 +190,39 @@ public class Board {
 		turn = (turn == 'w' ? 'b' : 'w');
 	}
 
-	public static char inCheck(Piece[][] board) {
+	public char inCheck() {
+		Piece whiteKing = getKing('w');
+		int whiteKingX = (int) whiteKing.location.getX();
+		int whiteKingY = (int) whiteKing.location.getY();
+		for (Piece p : blackPieces) {
+			if (!(p instanceof King) && (p.getMobility()[whiteKingX][whiteKingY] == 2)
+					&& (isPathClear(p.location, whiteKing.location))) {
+
+				return 'w';
+			}
+		}
+
+		Piece blackKing = getKing('b');
+		int blackKingX = (int) blackKing.location.getX();
+		int blackKingY = (int) blackKing.location.getY();
+		for (Piece p : whitePieces) {
+			if (!(p instanceof King) && (p.getMobility()[blackKingX][blackKingY] == 2)
+					&& (isPathClear(p.location, blackKing.location))) {
+
+				return 'b';
+			}
+		}
 		return ' ';
+	}
+
+	private Piece getKing(char color) {
+		ArrayList<Piece> searchList = (color == 'b' ? blackPieces : whitePieces);
+		for (Piece p : searchList) {
+			if (p instanceof King) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	public static boolean inStalemate(Piece[][] board) {
