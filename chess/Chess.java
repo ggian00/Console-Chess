@@ -1,4 +1,7 @@
 import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import pieces.Bishop;
 import pieces.King;
@@ -10,6 +13,9 @@ import pieces.Rook;
 
 public class Chess {
 
+	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	public static char tempTurn = 'w';
+
 	/**
 	 * Description...
 	 *
@@ -19,10 +25,69 @@ public class Chess {
 	public static void main(String args[]) {
 		System.out.println("Welcome to Chess.");
 		Board b = new Board();
-		System.out.println(b);
+		char check = 'N';
 
-		mobilityTestSuite();
+		// (tempTurn == 'w' ? "White's move: " : "Blacks's move: ");
+//		System.out.println(b);
+//		System.out.println("\n" + (tempTurn == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
+		do{
+			System.out.println(b);
+			
+			Point[] pts = readMove();
 
+			while (! b.movePiece(pts[0], pts[1])){
+				System.out.println("Illegal move, try again");
+				pts = readMove();
+			}
+			
+			// Move will be made by this point
+		} while(b.inCheck() == ' '); // && not stalemate
+		// mobilityTestSuite();
+
+	}
+	
+
+	/**
+	 * Description...
+	 *
+	 * @param ...
+	 * @return .....
+	 */
+	private static Point[] readMove() {
+		String input = "";
+		
+		Point op = null;
+		Point tp = null;
+
+		System.out.println((tempTurn == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
+		
+		while (true) {
+			try {
+				input = reader.readLine();
+				System.out.println("");
+				break;
+			} catch (IOException e) {
+			}
+		}
+		System.out.println("MOVE: " + input);
+		
+		String origin = input.split(" ")[0];
+		String target = input.split(" ")[1];
+		System.out.println("Origin: " + origin + "\nTarget: " + target);
+		
+		// (x,y)
+		op = new Point(origin.charAt(0) - 'a', origin.charAt(1) - '1');
+		tp = new Point(target.charAt(0) - 'a', target.charAt(1) - '1');
+		
+		// (y,x)
+//		op = new Point(origin.charAt(1) - '1', origin.charAt(0) - 'a');
+//		tp = new Point(target.charAt(1) - '1', target.charAt(0) - 'a');
+		
+		System.out.println("Origin: " + op + "\nTarget: " + tp);
+		
+		Point output[] = {op, tp};
+		
+		return output;
 	}
 
 	private static void printMobility(int[][] mob) {
