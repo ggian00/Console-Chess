@@ -153,7 +153,7 @@ public class Board {
 				currX += orientation;
 			}
 
-		} else if ((origin.x - target.x) == (origin.y - target.y)) { // check
+		} else if (Math.abs((origin.x - target.x)) == Math.abs((origin.y - target.y))) { // check
 																		// diagonal
 																		// of
 																		// slope
@@ -178,7 +178,8 @@ public class Board {
 			}
 		}
 
-		if (board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
+
+		if (board[target.x][target.y] != null && board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
 			return false;
 		}
 
@@ -438,6 +439,7 @@ public class Board {
 			}
 		}
 
+		// MAY NEED TO CONFIRM PROMOTION CHAR
 		// HAVE TO CONFIRM PERSISTENCE OF PAWNS WITH EN PASSANT
 		// Enpassant/Pawn Special Move
 		if (p instanceof Pawn) {
@@ -607,6 +609,16 @@ public class Board {
 		return false;
 	}
 
+	// Interface with match logic that allows the implementer to determine if the match can continue
+	public boolean matchCanContinue(){
+		return true;
+	}
+	
+	// Prints final state of the match
+	public void printEndState(){
+		System.out.println("The Match is over");
+	}
+	
 	public void initializeBoard() {
 		board[0][7] = new Rook('b', new Point(0, 7));
 		board[1][7] = new Knight('b', new Point(1, 7));

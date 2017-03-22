@@ -14,7 +14,7 @@ import pieces.Rook;
 public class Chess {
 
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-	public static char tempTurn = 'w';
+	public static Board b = null;
 
 	/**
 	 * Description...
@@ -24,8 +24,7 @@ public class Chess {
 	 */
 	public static void main(String args[]) {
 		System.out.println("Welcome to Chess.");
-		Board b = new Board();
-		char check = 'N';
+		b = new Board();
 
 		// (tempTurn == 'w' ? "White's move: " : "Blacks's move: ");
 //		System.out.println(b);
@@ -33,17 +32,29 @@ public class Chess {
 		do{
 			System.out.println(b);
 			
-			Point[] pts = readMove();
+			Object[] parts = readMove();
+			Point origin = (Point) parts[0];
+			Point target = (Point) parts[1];
+			char promotion = (char) parts[2];
+			
+//			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
-			while (! b.movePiece(pts[0], pts[1])){
+			while (! b.executeMove(origin, target, promotion)){
 				System.out.println("Illegal move, try again");
-				pts = readMove();
+				parts = readMove();
+				origin = (Point) parts[0];
+				target = (Point) parts[1];
+				promotion = (char) parts[2];
 			}
 			
+			b.toggleTurn();
+			
 			// Move will be made by this point
-		} while(b.inCheck() == ' '); // && not stalemate
+		} while(b.matchCanContinue()); // && not stalemate
 		// mobilityTestSuite();
-
+		
+		b.printEndState();
+		
 	}
 	
 
@@ -53,13 +64,13 @@ public class Chess {
 	 * @param ...
 	 * @return .....
 	 */
-	private static Point[] readMove() {
+	private static Object[] readMove() {
 		String input = "";
 		
 		Point op = null;
 		Point tp = null;
 
-		System.out.println((tempTurn == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
+		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
 		
 		while (true) {
 			try {
@@ -69,11 +80,20 @@ public class Chess {
 			} catch (IOException e) {
 			}
 		}
-		System.out.println("MOVE: " + input);
+//		System.out.println("MOVE: " + input);
+		
+		if(input.contains("resign")){
+			
+		}
 		
 		String origin = input.split(" ")[0];
 		String target = input.split(" ")[1];
-		System.out.println("Origin: " + origin + "\nTarget: " + target);
+		char pro = 'Q';
+		if(input.split(" ").length > 2){
+			pro = input.split(" ")[1].charAt(0);
+		}
+		
+//		System.out.println("Origin: " + origin + "\nTarget: " + target);
 		
 		// (x,y)
 		op = new Point(origin.charAt(0) - 'a', origin.charAt(1) - '1');
@@ -83,9 +103,9 @@ public class Chess {
 //		op = new Point(origin.charAt(1) - '1', origin.charAt(0) - 'a');
 //		tp = new Point(target.charAt(1) - '1', target.charAt(0) - 'a');
 		
-		System.out.println("Origin: " + op + "\nTarget: " + tp);
+//		System.out.println("Origin: " + op + "\nTarget: " + tp + "\nPromotion: " + pro );
 		
-		Point output[] = {op, tp};
+		Object output[] = {op, tp, pro};
 		
 		return output;
 	}
