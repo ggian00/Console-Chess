@@ -33,12 +33,12 @@ public class Chess {
 	 * @return .....
 	 */
 	public static void main(String args[]) {
-//		try {
-//			scan = new Scanner(new File("ex1.txt"));
-//		} catch (Exception e) {
-//			System.out.println("Error");
-//			return;
-//		}
+		try {
+			scan = new Scanner(new File("ex1.txt"));
+		} catch (Exception e) {
+			System.out.println("Error");
+			return;
+		}
 		
 		System.out.println("Welcome to Chess.");
 		b = new Board();
@@ -51,8 +51,8 @@ public class Chess {
 			
 			System.out.println(b);
 			
-//			readMoveTest();
-			readMove();
+			readMoveTest();
+//			readMove();
 			
 //			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
@@ -124,7 +124,7 @@ public class Chess {
 		System.out.println("Line " + lineNum);
 		lineNum += 1;
 
-		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Blacks's move: ") + input); // change tempTurn to b.getTurn()
+		System.out.println((b.getTurn() == 'w' ? "White's move: " : "Black's move: ") + input); // change tempTurn to b.getTurn()
 		
 //		System.out.println("MOVE: " + input);
 		
