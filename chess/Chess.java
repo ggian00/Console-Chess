@@ -25,6 +25,7 @@ public class Chess {
 	
 	static Scanner scan = null;
 	static int lineNum = 1;
+	static final boolean AUTO = true;
 
 	/**
 	 * Description...
@@ -33,12 +34,12 @@ public class Chess {
 	 * @return .....
 	 */
 	public static void main(String args[]) {
-//		try {
-//			scan = new Scanner(new File("ex1.txt"));
-//		} catch (Exception e) {
-//			System.out.println("Error");
-//			return;
-//		}
+		try {
+			scan = new Scanner(new File("ex1.txt"));
+		} catch (Exception e) {
+			System.out.println("Test File not found Error");
+			return;
+		}
 		
 		System.out.println("Welcome to Chess.");
 		b = new Board();
@@ -51,8 +52,11 @@ public class Chess {
 			
 			System.out.println(b);
 			
-//			readMoveTest();
-			readMove();
+			if(AUTO){
+				readMoveTest();
+			} else {
+				readMove();
+			}
 			
 //			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
@@ -124,7 +128,7 @@ public class Chess {
 		System.out.println("Line " + lineNum);
 		lineNum += 1;
 
-		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Blacks's move: ") + input); // change tempTurn to b.getTurn()
+		System.out.println((b.getTurn() == 'w' ? "White's move: " : "Black's move: ") + input); // change tempTurn to b.getTurn()
 		
 //		System.out.println("MOVE: " + input);
 		
