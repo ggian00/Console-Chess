@@ -76,4 +76,11 @@ public class Knight extends Piece {
 		return super.toString() + 'N';
 	}
 
+	public void move(Point p) {
+		super.move(p);
+	}
+
+	public Piece copy() {
+		return new Knight(color, new Point(location.x, location.y));
+	}
 }

@@ -4,6 +4,8 @@ import java.awt.Point;
 
 public class King extends Piece {
 
+	public boolean hasMoved = false;
+
 	public King(char color, Point location) {
 		super(color, location);
 	}
@@ -68,6 +70,17 @@ public class King extends Piece {
 	 */
 	public String toString() {
 		return super.toString() + 'K';
+	}
+
+	public void move(Point p) {
+		super.move(p);
+		if (!(hasMoved)) {
+			hasMoved = true;
+		}
+	}
+
+	public Piece copy() {
+		return new King(color, new Point(location.x, location.y));
 	}
 
 }

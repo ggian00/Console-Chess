@@ -4,6 +4,8 @@ import java.awt.Point;
 
 public class Pawn extends Piece {
 
+	public int turnsSinceSpecialMove = 0;
+
 	public Pawn(char color, Point location) {
 		super(color, location);
 	}
@@ -35,8 +37,12 @@ public class Pawn extends Piece {
 		int currY = this.location.y;
 
 		// sets two possible caputures
-		mobility[currX + 1][currY + orientation] = 2;
-		mobility[currX - 1][currY + orientation] = 2;
+		if (currX + 1 < 8) {
+			mobility[currX + 1][currY + orientation] = 2;
+		}
+		if (currX - 1 >= 0) {
+			mobility[currX - 1][currY + orientation] = 2;
+		}
 
 		// Two possible forward moves (1 fwd or 2 fwd)
 
@@ -63,5 +69,22 @@ public class Pawn extends Piece {
 	 */
 	public String toString() {
 		return super.toString() + 'p';
+	}
+
+	public void move(Point p) {
+		super.move(p);
+	}
+
+	public Piece copy() {
+		return new Pawn(color, new Point(location.x, location.y));
+	}
+
+	public boolean equals(Object o) {
+		if (o instanceof Pawn) {
+			if (((Pawn) o).location.equals(location) && ((Pawn) o).color == color) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public abstract class Piece {
 
-	private char color;
+	protected char color;
 	public Point location;
 
 	Piece(char color, Point location) {
@@ -27,6 +27,12 @@ public abstract class Piece {
 	 * @return mobility of game piece.
 	 */
 	public abstract int[][] getMobility();
+
+	public void move(Point p) {
+		location = p;
+	}
+
+	public abstract Piece copy();
 
 	/**
 	 * Returns the string representation of the chess game piece to be used in

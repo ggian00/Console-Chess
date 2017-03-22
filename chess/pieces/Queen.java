@@ -39,4 +39,12 @@ public class Queen extends Piece {
 		return super.toString() + 'Q';
 	}
 
+	public void move(Point p) {
+		super.move(p);
+	}
+
+	public Piece copy() {
+		return new Queen(color, new Point(location.x, location.y));
+	}
+
 }

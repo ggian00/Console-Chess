@@ -32,4 +32,12 @@ public class Bishop extends Piece {
 
 		return mobility;
 	}
+
+	public void move(Point p) {
+		super.move(p);
+	}
+
+	public Piece copy() {
+		return new Bishop(color, new Point(location.x, location.y));
+	}
 }

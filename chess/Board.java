@@ -14,6 +14,13 @@ public class Board {
 	Piece[][] board = new Piece[8][8];
 	ArrayList<Piece> whitePieces = new ArrayList<Piece>(16);
 	ArrayList<Piece> blackPieces = new ArrayList<Piece>(16);
+
+	Piece[][] vBoard = new Piece[8][8];
+	ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
+	ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
+
+	ArrayList<Pawn> enpassantPawns = new ArrayList<Pawn>();
+
 	private char turn = 'w';
 
 	Board() {
@@ -70,7 +77,8 @@ public class Board {
 																			// to
 																			// check
 
-		} else if (!isPathClear(piecePos, targetPos)) { // otherwise check path
+		} else if (!isPathClear(board, piecePos, targetPos)) { // otherwise
+																// check path
 			return false; // pieces in the way
 		}
 
@@ -110,7 +118,7 @@ public class Board {
 		for (int row = 7; row >= 0; row--) {
 			for (int col = 0; col < 8; col++) {
 				// No Piece
-				if (board[row][col] == null) {
+				if (board[col][row] == null) {
 					if ((row % 2) == 0 ^ (col % 2) == 0) { // Different parities
 						sb.append("  ");
 					} else { // Same parity
@@ -118,7 +126,7 @@ public class Board {
 					}
 					// Piece
 				} else {
-					sb.append(board[row][col]);
+					sb.append(board[col][row]);
 				}
 				sb.append(' ');
 			}
@@ -132,19 +140,9 @@ public class Board {
 		return sb.toString();
 	}
 
-	
-	/**
-	 * Returns true if the piece at the origin location has the proper
-	 * mobility and is no blocked by anything else in reaching the target location.
-	 * Returns false if the piece can not legally reach the target
-	 *
-	 * @param origin location of the piece whose path is being checked
-	 * @param target the ending location of the path the piece wants to follow
-	 * @return boolean representing whether or not the path is clear for the given piece
-	 */
-	private boolean isPathClear(Point origin, Point target) {
+	private boolean isPathClear(Piece[][] board, Point origin, Point target) {
 		if (origin.equals(target)) {
-			return false; // Maybe make this false...this should never happen
+			return false;
 		}
 
 		if (origin.x == target.x) { // check vertical path
@@ -152,9 +150,9 @@ public class Board {
 			int orientation = ((origin.y > target.y) ? -1 : 1);
 			int currY = origin.y + orientation;
 			while (currY != target.y) {
-				if (this.board[origin.x][currY] != null) { // every piece
-															// between must be
-															// clear
+				if (board[origin.x][currY] != null) { // every piece
+														// between must be
+														// clear
 					return false;
 				}
 				currY += orientation;
@@ -165,9 +163,9 @@ public class Board {
 			int orientation = ((origin.x > target.x) ? -1 : 1);
 			int currX = origin.x + orientation;
 			while (currX != target.x) {
-				if (this.board[currX][origin.y] != null) { // every piece
-															// between must be
-															// clear
+				if (board[currX][origin.y] != null) { // every piece
+														// between must be
+														// clear
 					return false;
 				}
 				currX += orientation;
@@ -179,58 +177,67 @@ public class Board {
 																		// slope
 																		// 1
 
-			int orientation = ((origin.x > target.x) ? -1 : 1);
-			int curr = origin.x + orientation;
-			while (curr != target.x) {
-				if (this.board[curr][curr] != null) { // every piece between
+			int orientationX = ((origin.x > target.x) ? -1 : 1);
+			int currX = origin.x + orientationX;
+			int orientationY = ((origin.y > target.y) ? -1 : 1);
+			int currY = origin.y + orientationY;
+			while (currX != target.x && currY != target.y) {
+				if (this.board[currX][currY] != null) { // every piece between
 														// must be clear
 					return false;
 				}
-				curr += orientation;
+				currX += orientationX;
+				currY += orientationY;
 			}
 
 		} else {
-			return false; // Not a valid move, perhaps a knight snuck in here
+			if (!(board[origin.x][origin.y] instanceof Knight)) {
+				return false;
+			}
 		}
 
 		return true;
 	}
 
-	/**
-	 * Toggles the who is allowed to perform valid moves.
-	 * Sets turn to white if turn is black and vice versa
-	 * 
-	 */
 	private void toggleTurn() {
 		turn = (turn == 'w' ? 'b' : 'w');
+		ArrayList<Pawn> pawnsToRemove = new ArrayList<Pawn>();
+		for (Pawn p : enpassantPawns) {
+			p.turnsSinceSpecialMove++;
+			if (p.turnsSinceSpecialMove >= 2) {
+				pawnsToRemove.add(p);
+			}
+		}
+		for (Pawn p : pawnsToRemove) {
+			enpassantPawns.remove(p);
+		}
 	}
 
-	public char inCheck() {
-		
-		// we need to determine how this is used.
-		
-		Piece whiteKing = getKing('w');
-		int whiteKingX = (int) whiteKing.location.getX();
-		int whiteKingY = (int) whiteKing.location.getY();
-		for (Piece p : blackPieces) {
-			if (!(p instanceof King) && (p.getMobility()[whiteKingX][whiteKingY] == 2)
-					&& (isPathClear(p.location, whiteKing.location))) {
+	/**
+	 * Is the specified color in check?
+	 * 
+	 * @param color
+	 * @param board
+	 * @param whitePieces
+	 * @param blackPieces
+	 * @return
+	 */
+	public boolean inCheck(char color, Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces) {
 
-				return 'w';
+		Piece king = getKing(color);
+		int kingX = (int) king.location.getX();
+		int kingY = (int) king.location.getY();
+		// Want to see if opponent pieces can attack king
+		ArrayList<Piece> searchList = (color == 'w' ? blackPieces : whitePieces);
+
+		for (Piece p : searchList) {
+			if ((p.getMobility()[kingX][kingY] == 2) && (isPathClear(board, p.location, king.location))) {
+
+				return true;
 			}
 		}
 
-		Piece blackKing = getKing('b');
-		int blackKingX = (int) blackKing.location.getX();
-		int blackKingY = (int) blackKing.location.getY();
-		for (Piece p : whitePieces) {
-			if (!(p instanceof King) && (p.getMobility()[blackKingX][blackKingY] == 2)
-					&& (isPathClear(p.location, blackKing.location))) {
-
-				return 'b';
-			}
-		}
-		return ' ';
+		return false;
 	}
 
 	private Piece getKing(char color) {
@@ -243,72 +250,372 @@ public class Board {
 		return null;
 	}
 
-	private boolean existValidMoves() {
-		for (Piece p : whitePieces) {
+	private boolean existValidMoves(char color) {
+		ArrayList<Piece> searchList = (color == 'b' ? blackPieces : whitePieces);
+
+		for (Piece p : searchList) {
 			int[][] mobility = p.getMobility();
 			for (int x = 0; x < 8; x++) {
 				for (int y = 0; y < 8; y++) {
-					if (mobility[x][y] != 0) {
+					if (mobility[x][y] != 0 && isPathClear(board, p.location, new Point(x, y))) {
 						return true;
 					}
 				}
 			}
 		}
-		for (Piece p : blackPieces) {
-			int[][] mobility = p.getMobility();
-			for (int x = 0; x < 8; x++) {
-				for (int y = 0; y < 8; y++) {
-					if (mobility[x][y] != 0) {
-						return true;
-					}
-				}
+
+		return false;
+	}
+
+	private boolean pawnIsEnpassant(Pawn p) {
+		for (Pawn q : enpassantPawns) {
+			if (p.equals(q)) {
+				return true;
 			}
 		}
 		return false;
 	}
 
+	public boolean executeMove(Point origin, Point target, char promotion) {
+		saveStateToVirtualStorage();
+
+		Piece p = vBoard[origin.x][origin.y];
+		char color = p.getColor();
+
+		// Checking for special moves first
+
+		// Castling
+		if (p instanceof King) {
+			if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 2 && target.y == 0) {
+				// White Queenside Castle attempt detected
+				Piece rook = vBoard[0][0];
+				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[1][0] == null
+						&& board[2][0] == null && board[3][0] == null) {
+					// Check if king is to pass through attacked squares.
+					for (Piece q : blackPieces) {
+						for (int i = 1; i <= 3; i++) {
+							if (q.getMobility()[i][0] == 2 && isPathClear(board, q.location, new Point(i, 0))) {
+								return false;
+							}
+						}
+					}
+					// Castle eligible
+					vBoard[2][0] = p;
+					vBoard[3][0] = rook;
+					vBoard[4][0] = null;
+					vBoard[0][0] = null;
+					p.move(new Point(2, 0));
+					rook.move(new Point(3, 0));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					board[2][0] = p;
+					board[3][0] = rook;
+					board[4][0] = null;
+					board[0][0] = null;
+
+					return true;
+
+				} else {
+					return false;
+				}
+			} else if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 6 && target.y == 0) {
+				// White Kingside Castle attempt detected
+				Piece rook = board[0][0];
+				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[5][0] == null
+						&& board[6][0] == null) {
+					// Check if king is to pass through attacked squares.
+					for (Piece q : blackPieces) {
+						for (int i = 5; i <= 6; i++) {
+							if (q.getMobility()[i][0] == 2 && isPathClear(board, q.location, new Point(i, 0))) {
+								return false;
+							}
+						}
+					}
+					// Castle eligible
+					vBoard[6][0] = p;
+					vBoard[5][0] = rook;
+					vBoard[4][0] = null;
+					vBoard[7][0] = null;
+					p.move(new Point(6, 0));
+					rook.move(new Point(5, 0));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					board[6][0] = p;
+					board[5][0] = rook;
+					board[4][0] = null;
+					board[7][0] = null;
+
+					return true;
+				} else {
+					return false;
+				}
+			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 2 && target.y == 7) {
+				// Black Queenside Castle attempt detected
+				Piece rook = board[0][7];
+				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[1][7] == null
+						&& board[2][7] == null && board[3][7] == null) {
+					// Check if king is to pass through attacked squares.
+					for (Piece q : blackPieces) {
+						for (int i = 1; i <= 3; i++) {
+							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
+								return false;
+							}
+						}
+					}
+					// Castle eligible
+					vBoard[2][7] = p;
+					vBoard[3][7] = rook;
+					vBoard[4][7] = null;
+					vBoard[0][7] = null;
+					p.move(new Point(2, 7));
+					rook.move(new Point(3, 7));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					board[2][7] = p;
+					board[3][7] = rook;
+					board[4][7] = null;
+					board[0][7] = null;
+
+					return true;
+				} else {
+					return false;
+				}
+			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 6 && target.y == 7) {
+				// Black Kingside Castle attempt detected
+				Piece rook = board[0][0];
+				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[5][7] == null
+						&& board[6][7] == null) {
+					// Check if king is to pass through attacked squares.
+					for (Piece q : blackPieces) {
+						for (int i = 5; i <= 6; i++) {
+							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
+								return false;
+							}
+						}
+					}
+					// Castle eligible
+					vBoard[6][7] = p;
+					vBoard[5][7] = rook;
+					vBoard[4][7] = null;
+					vBoard[7][7] = null;
+					p.move(new Point(6, 7));
+					rook.move(new Point(5, 7));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					board[6][7] = p;
+					board[5][7] = rook;
+					board[4][7] = null;
+					board[7][7] = null;
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		// HAVE TO CONFIRM PERSISTENCE OF PAWNS WITH EN PASSANT
+		// Enpassant/Pawn Special Move
+		if (p instanceof Pawn) {
+			// EP
+			if (color == 'w' && p.location.y == 4 && board[target.x][target.y] == null) {
+				if (board[target.x][4] instanceof Pawn && pawnIsEnpassant(new Pawn('b', new Point(target.x, 4)))) {
+
+					vBoard[origin.x][origin.y] = null;
+					vBoard[target.x][target.y] = p;
+					p.move(new Point(target.x, target.y));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					blackPieces.remove(board[target.x][4]);
+					board[origin.x][origin.y] = null;
+					board[target.x][4] = null;
+					board[target.x][target.y] = p;
+
+					return true;
+				} else {
+					return false;
+				}
+			} else if (color == 'b' && p.location.y == 3 && board[target.x][target.y] == null) {
+				if (board[target.x][3] instanceof Pawn && pawnIsEnpassant(new Pawn('w', new Point(target.x, 3)))) {
+					vBoard[origin.x][origin.y] = null;
+					vBoard[target.x][target.y] = p;
+					p.move(new Point(target.x, target.y));
+
+					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						return false;
+					}
+
+					whitePieces.remove(board[target.x][3]);
+					board[origin.x][origin.y] = null;
+					board[target.x][3] = null;
+					board[target.x][target.y] = p;
+
+					return true;
+				} else {
+					return false;
+				}
+				// Special Move
+			} else if (Math.abs(origin.y - target.y) == 2) {
+				enpassantPawns.add((Pawn) p);
+				// Promotion
+			} else if (color == 'w' && target.y == 7) {
+				Piece temp = p;
+				vWhitePieces.remove(p);
+				p = promote(promotion, temp);
+				vWhitePieces.add(p);
+
+				vBoard[origin.x][origin.y] = null;
+				vBoard[target.x][target.y] = p;
+				p.move(new Point(target.x, target.y));
+
+				if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+					return false;
+				}
+
+				whitePieces.remove(board[origin.x][origin.y]);
+				board[origin.x][origin.y] = null;
+				board[target.x][target.y] = p;
+				whitePieces.add(p);
+
+				return true;
+
+			} else if (color == 'b' && target.y == 0) {
+				Piece temp = p;
+				vBlackPieces.remove(p);
+				p = promote(promotion, temp);
+				vBlackPieces.add(p);
+
+				vBoard[origin.x][origin.y] = null;
+				vBoard[target.x][target.y] = p;
+				p.move(new Point(target.x, target.y));
+
+				if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+					return false;
+				}
+
+				blackPieces.remove(board[origin.x][origin.y]);
+				board[origin.x][origin.y] = null;
+				board[target.x][target.y] = p;
+				blackPieces.add(p);
+
+				return true;
+			}
+		}
+
+		// All Special Cases handled.
+
+		vBoard[origin.x][origin.y] = null;
+		vBoard[target.x][target.y] = p;
+		p.move(new Point(target.x, target.y));
+
+		if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+			return false;
+		}
+
+		if (board[target.x][target.y] != null) {
+			(color == 'b' ? whitePieces : blackPieces).remove(board[target.x][target.y]);
+		}
+
+		(color == 'w' ? whitePieces : blackPieces).remove(board[origin.x][origin.y]);
+		(color == 'w' ? whitePieces : blackPieces).add(p);
+		board[origin.x][origin.y] = null;
+		board[target.x][target.y] = p;
+
+		return true;
+	}
+
+	private Piece promote(char promotion, Piece pawn) {
+		Piece promotedPiece = null;
+		switch (promotion) {
+		case 'Q':
+			promotedPiece = new Queen(pawn.getColor(), pawn.location);
+			break;
+		case 'K':
+			promotedPiece = new Knight(pawn.getColor(), pawn.location);
+			break;
+		case 'R':
+			promotedPiece = new Rook(pawn.getColor(), pawn.location);
+			break;
+		case 'B':
+			promotedPiece = new Bishop(pawn.getColor(), pawn.location);
+			break;
+		}
+		return promotedPiece;
+	}
+
+	private void saveStateToVirtualStorage() {
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				if (board[x][y] != null) {
+					vBoard[x][y] = board[x][y].copy();
+					if (vBoard[x][y].getColor() == 'w') {
+						vWhitePieces.add(vBoard[x][y]);
+					} else {
+						vBlackPieces.add(vBoard[x][y]);
+					}
+				}
+			}
+		}
+	}
+
 	public boolean inStalemate(Piece[][] board) {
-		if ((inCheck() == ' ') && !existValidMoves()) {
+		if (!inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
+				&& !existValidMoves('w') && !existValidMoves('b')) {
 			return true;
 		}
 		return false;
 	}
 
 	private void initializeBoard() {
-		board[7][0] = new Rook('b', new Point(7, 0));
-		board[7][1] = new Knight('b', new Point(7, 1));
-		board[7][2] = new Bishop('b', new Point(7, 2));
-		board[7][3] = new Queen('b', new Point(7, 3));
-		board[7][4] = new King('b', new Point(7, 4));
-		board[7][5] = new Bishop('b', new Point(7, 5));
-		board[7][6] = new Knight('b', new Point(7, 6));
+		board[0][7] = new Rook('b', new Point(0, 7));
+		board[1][7] = new Knight('b', new Point(1, 7));
+		board[2][7] = new Bishop('b', new Point(2, 7));
+		board[3][7] = new Queen('b', new Point(3, 7));
+		board[4][7] = new King('b', new Point(4, 7));
+		board[5][7] = new Bishop('b', new Point(5, 7));
+		board[6][7] = new Knight('b', new Point(6, 7));
 		board[7][7] = new Rook('b', new Point(7, 7));
 
 		for (int i = 0; i < 8; i++) {
-			board[6][i] = new Pawn('b', new Point(6, i));
+			board[i][6] = new Pawn('b', new Point(i, 6));
 		}
 
-		for (int x = 7; x >= 6; x--) {
-			for (int y = 0; y < 8; y++) {
+		for (int y = 7; y >= 6; y--) {
+			for (int x = 0; x < 8; x++) {
 				blackPieces.add(board[x][y]);
 			}
 		}
 
 		for (int i = 0; i < 8; i++) {
-			board[1][i] = new Pawn('w', new Point(1, i));
+			board[i][1] = new Pawn('w', new Point(i, 1));
 		}
 
 		board[0][0] = new Rook('w', new Point(0, 0));
-		board[0][1] = new Knight('w', new Point(0, 1));
-		board[0][2] = new Bishop('w', new Point(0, 2));
-		board[0][3] = new Queen('w', new Point(0, 3));
-		board[0][4] = new King('w', new Point(0, 4));
-		board[0][5] = new Bishop('w', new Point(0, 5));
-		board[0][6] = new Knight('w', new Point(0, 6));
-		board[0][7] = new Rook('w', new Point(0, 7));
+		board[1][0] = new Knight('w', new Point(1, 0));
+		board[2][0] = new Bishop('w', new Point(2, 0));
+		board[3][0] = new Queen('w', new Point(3, 0));
+		board[4][0] = new King('w', new Point(4, 0));
+		board[5][0] = new Bishop('w', new Point(5, 0));
+		board[6][0] = new Knight('w', new Point(6, 0));
+		board[7][0] = new Rook('w', new Point(7, 0));
 
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 8; y++) {
+		for (int y = 0; y < 2; y++) {
+			for (int x = 0; x < 8; x++) {
 				whitePieces.add(board[x][y]);
 			}
 		}
