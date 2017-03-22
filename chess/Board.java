@@ -15,10 +15,6 @@ public class Board {
 	ArrayList<Piece> whitePieces = new ArrayList<Piece>(16);
 	ArrayList<Piece> blackPieces = new ArrayList<Piece>(16);
 
-	Piece[][] vBoard = new Piece[8][8];
-	ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
-	ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
-
 	ArrayList<Pawn> enpassantPawns = new ArrayList<Pawn>();
 
 	private char turn = 'w';
@@ -249,6 +245,17 @@ public class Board {
 			for (int x = 0; x < 8; x++) {
 				for (int y = 0; y < 8; y++) {
 					if (mobility[x][y] != 0 && isPathClear(board, p.location, new Point(x, y))) {
+						// Check if said move will cause check.
+						Piece[][] vBoard = new Piece[8][8];
+						ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
+						ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
+
+						saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
+						executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ');
+						if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+							continue;
+						}
+
 						return true;
 					}
 				}
@@ -277,7 +284,13 @@ public class Board {
 		return true;
 	}
 
-	public boolean executeMove(Point origin, Point target, char promotion) {
+	public boolean executeMove(Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces,
+			Point origin, Point target, char promotion) {
+
+		Piece[][] vBoard = new Piece[8][8];
+		ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
+		ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
+
 		// Check bounds of origin and target
 		if (!verifyBounds(origin, target)) {
 			return false;
@@ -294,7 +307,7 @@ public class Board {
 			return false;
 		}
 
-		saveStateToVirtualStorage();
+		saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
 
 		Piece p = vBoard[origin.x][origin.y];
 		char color = p.getColor();
@@ -589,7 +602,7 @@ public class Board {
 		case 'Q':
 			promotedPiece = new Queen(pawn.getColor(), pawn.location);
 			break;
-		case 'K':
+		case 'N':
 			promotedPiece = new Knight(pawn.getColor(), pawn.location);
 			break;
 		case 'R':
@@ -602,7 +615,10 @@ public class Board {
 		return promotedPiece;
 	}
 
-	private void saveStateToVirtualStorage() {
+	private void saveStateToVirtualStorage(Piece[][] vBoard, ArrayList<Piece> vWhitePieces,
+			ArrayList<Piece> vBlackPieces) {
+		vWhitePieces = new ArrayList<Piece>();
+		vBlackPieces = new ArrayList<Piece>();
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				if (board[x][y] != null) {
