@@ -132,9 +132,19 @@ public class Board {
 		return sb.toString();
 	}
 
+	
+	/**
+	 * Returns true if the piece at the origin location has the proper
+	 * mobility and is no blocked by anything else in reaching the target location.
+	 * Returns false if the piece can not legally reach the target
+	 *
+	 * @param origin location of the piece whose path is being checked
+	 * @param target the ending location of the path the piece wants to follow
+	 * @return boolean representing whether or not the path is clear for the given piece
+	 */
 	private boolean isPathClear(Point origin, Point target) {
 		if (origin.equals(target)) {
-			return true; // Maybe make this false...this should never happen
+			return false; // Maybe make this false...this should never happen
 		}
 
 		if (origin.x == target.x) { // check vertical path
@@ -186,11 +196,19 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Toggles the who is allowed to perform valid moves.
+	 * Sets turn to white if turn is black and vice versa
+	 * 
+	 */
 	private void toggleTurn() {
 		turn = (turn == 'w' ? 'b' : 'w');
 	}
 
 	public char inCheck() {
+		
+		// we need to determine how this is used.
+		
 		Piece whiteKing = getKing('w');
 		int whiteKingX = (int) whiteKing.location.getX();
 		int whiteKingY = (int) whiteKing.location.getY();
