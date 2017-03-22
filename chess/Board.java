@@ -250,8 +250,7 @@ public class Board {
 						ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
 
 						saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
-						executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ');
-						if (!inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+						if (executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ')) {
 							return true;
 						}
 					}
@@ -659,8 +658,10 @@ public class Board {
 	}
 
 	public boolean inStalemate() {
-		if (!inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
-				&& !existValidMoves('w') && !existValidMoves('b')) {
+		if (turn == 'w' && !inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
+			System.out.println("Stalemate");
+			return true;
+		} else if (turn == 'b' && !inCheck('b', board, whitePieces, blackPieces) && !existValidMoves('b')) {
 			System.out.println("Stalemate");
 			return true;
 		}
@@ -671,6 +672,11 @@ public class Board {
 	// the match can continue
 	public boolean matchCanContinue() {
 		return !(checkMate() || inStalemate());
+	}
+
+	// Prints final state of the match
+	public void printEndState() {
+		System.out.println("The Match is over");
 	}
 
 	public void initializeBoard() {
