@@ -563,6 +563,9 @@ public class Board {
 		p.move(new Point(target.x, target.y));
 
 		if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+			if (p instanceof Pawn && enpassantPawns.contains((Pawn) p)) {
+				enpassantPawns.remove((Pawn) p);
+			}
 			return false;
 		}
 
