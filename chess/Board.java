@@ -251,16 +251,13 @@ public class Board {
 
 						saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
 						executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ');
-						if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-							continue;
+						if (!inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+							return true;
 						}
-
-						return true;
 					}
 				}
 			}
 		}
-
 		return false;
 	}
 
@@ -651,8 +648,11 @@ public class Board {
 	}
 
 	public boolean checkMate() {
-		if (inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
-				&& !existValidMoves('w') && !existValidMoves('b')) {
+		if (turn == 'w' && inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
+			System.out.println("Black wins");
+			return true;
+		} else if (turn == 'b' && inCheck('b', board, whitePieces, blackPieces) && !existValidMoves('b')) {
+			System.out.println("White wins");
 			return true;
 		}
 		return false;
@@ -661,6 +661,7 @@ public class Board {
 	public boolean inStalemate() {
 		if (!inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
 				&& !existValidMoves('w') && !existValidMoves('b')) {
+			System.out.println("Stalemate");
 			return true;
 		}
 		return false;
