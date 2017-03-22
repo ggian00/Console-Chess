@@ -633,7 +633,15 @@ public class Board {
 		}
 	}
 
-	public boolean inStalemate(Piece[][] board) {
+	public boolean checkMate() {
+		if (inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
+				&& !existValidMoves('w') && !existValidMoves('b')) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean inStalemate() {
 		if (!inCheck('w', board, whitePieces, blackPieces) && !inCheck('b', board, whitePieces, blackPieces)
 				&& !existValidMoves('w') && !existValidMoves('b')) {
 			return true;
