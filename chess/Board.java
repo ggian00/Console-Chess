@@ -288,10 +288,22 @@ public class Board {
 			return false;
 		}
 
+		// Check that piece is not trying to move onto a friendly piece.
+		if (board[target.x][target.y] != null
+				&& board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
+			return false;
+		}
+
 		saveStateToVirtualStorage();
 
 		Piece p = vBoard[origin.x][origin.y];
 		char color = p.getColor();
+
+		// Check that piece is not trying to move onto another piece. (Ignore
+		// special moves)
+		if (p.getMobility()[target.x][target.y] == 1 && board[target.x][target.y] != null) {
+			return false;
+		}
 
 		// Checking for/performing special moves first
 
@@ -485,7 +497,8 @@ public class Board {
 				}
 				// Special Move
 			} else if (Math.abs(origin.y - target.y) == 2) {
-				if ((color == 'w' && origin.y == 1) || (color == 'b' && origin.y == 6)) {
+				if ((color == 'w' && origin.y == 1)
+						|| (color == 'b' && origin.y == 6) && isPathClear(board, origin, target)) {
 					enpassantPawns.add((Pawn) p);
 				} else {
 					return false;
@@ -552,6 +565,9 @@ public class Board {
 		p.move(new Point(target.x, target.y));
 
 		if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
+			if (p instanceof Pawn && enpassantPawns.contains((Pawn) p)) {
+				enpassantPawns.remove((Pawn) p);
+			}
 			return false;
 		}
 
