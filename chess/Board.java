@@ -27,82 +27,64 @@ public class Board {
 		initializeBoard();
 	}
 
-	public boolean movePiece(Point piecePos, Point targetPos) {
-
-		///////////////////////////////////////////////////
-		// Won't this cause an ArrayOutOfBoundsExe ? //
-		// I think we should either manually check bounds//
-		// Or put this in a try-catch //
-		///////////////////////////////////////////////////
-		Piece selected = board[piecePos.x][piecePos.y];
-
-		if (selected == null) { // Not a valid piece
-			return false;
-		}
-
-		if (selected.getColor() != this.turn) { // Current Player can't move
-												// that piece
-			return false;
-		}
-
-		///////////////////////////////////////////////////
-		// Needs bounds checking //
-		///////////////////////////////////////////////////
-		Piece targetPiece = board[targetPos.x][targetPos.y];
-
-		// Determines Required mobility to access position
-		// 1 = blank space. 2 = capture
-		int requiredMobility = 1;
-
-		if (targetPiece != null) { // is the target space empty?
-			if (targetPiece.getColor() == selected.getColor()) { // is team
-																	// mate?
-				return false; // can't move to where a team mate is
-			} else {
-				requiredMobility = 2; // must capture that piece
-			}
-		}
-
-		// Gets piece's mobility
-		int selectedMobility[][] = selected.getMobility();
-
-		// might be able to do this a better way
-		if (selectedMobility[targetPos.x][targetPos.y] != requiredMobility) {
-			return false; // Mobilities don't match up
-		}
-
-		// Target is in mobility, no must check path to reach it
-		if ((selected instanceof King) || (selected instanceof Knight)) { // No
-																			// path
-																			// to
-																			// check
-
-		} else if (!isPathClear(board, piecePos, targetPos)) { // otherwise
-																// check path
-			return false; // pieces in the way
-		}
-
-		// Creates Temp Board with move executed.
-		Piece tmpBoard[][] = this.board;
-		tmpBoard[piecePos.x][piecePos.y] = null;
-		tmpBoard[targetPos.x][targetPos.y] = selected;
-
-		// Turns out you don't have to check for check, just make sure the piece
-		// is valid
-
-		// if(selected.getColor() == inCheck(tmpBoard)){ // can't put yourself
-		// in check
-		// return false;
-		// }
-
-		// if nothing else prevents this from being a valid move, make it and
-		// return success
-
-		this.board = tmpBoard; // should be ok, assuming the creation of
-								// tmpBoard is ok
-
-		return true;
-	}
+	/***
+	 * public boolean movePiece(Point piecePos, Point targetPos) {
+	 * 
+	 * /////////////////////////////////////////////////// // Won't this cause
+	 * an ArrayOutOfBoundsExe ? // // I think we should either manually check
+	 * bounds// // Or put this in a try-catch //
+	 * /////////////////////////////////////////////////// Piece selected =
+	 * board[piecePos.x][piecePos.y];
+	 * 
+	 * if (selected == null) { // Not a valid piece return false; }
+	 * 
+	 * if (selected.getColor() != this.turn) { // Current Player can't move //
+	 * that piece return false; }
+	 * 
+	 * /////////////////////////////////////////////////// // Needs bounds
+	 * checking // /////////////////////////////////////////////////// Piece
+	 * targetPiece = board[targetPos.x][targetPos.y];
+	 * 
+	 * // Determines Required mobility to access position // 1 = blank space. 2
+	 * = capture int requiredMobility = 1;
+	 * 
+	 * if (targetPiece != null) { // is the target space empty? if
+	 * (targetPiece.getColor() == selected.getColor()) { // is team // mate?
+	 * return false; // can't move to where a team mate is } else {
+	 * requiredMobility = 2; // must capture that piece } }
+	 * 
+	 * // Gets piece's mobility int selectedMobility[][] =
+	 * selected.getMobility();
+	 * 
+	 * // might be able to do this a better way if
+	 * (selectedMobility[targetPos.x][targetPos.y] != requiredMobility) { return
+	 * false; // Mobilities don't match up }
+	 * 
+	 * // Target is in mobility, no must check path to reach it if ((selected
+	 * instanceof King) || (selected instanceof Knight)) { // No // path // to
+	 * // check
+	 * 
+	 * } else if (!isPathClear(board, piecePos, targetPos)) { // otherwise //
+	 * check path return false; // pieces in the way }
+	 * 
+	 * // Creates Temp Board with move executed. Piece tmpBoard[][] =
+	 * this.board; tmpBoard[piecePos.x][piecePos.y] = null;
+	 * tmpBoard[targetPos.x][targetPos.y] = selected;
+	 * 
+	 * // Turns out you don't have to check for check, just make sure the piece
+	 * // is valid
+	 * 
+	 * // if(selected.getColor() == inCheck(tmpBoard)){ // can't put yourself //
+	 * in check // return false; // }
+	 * 
+	 * // if nothing else prevents this from being a valid move, make it and //
+	 * return success
+	 * 
+	 * this.board = tmpBoard; // should be ok, assuming the creation of //
+	 * tmpBoard is ok
+	 * 
+	 * return true; }
+	 ***/
 
 	/**
 	 * Prints out the chess board. Empty spaces of the same parity are black
@@ -196,10 +178,18 @@ public class Board {
 			}
 		}
 
+		if (board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
+			return false;
+		}
+
 		return true;
 	}
 
-	private void toggleTurn() {
+	public char getTurn() {
+		return turn;
+	}
+
+	public void toggleTurn() {
 		turn = (turn == 'w' ? 'b' : 'w');
 		ArrayList<Pawn> pawnsToRemove = new ArrayList<Pawn>();
 		for (Pawn p : enpassantPawns) {
@@ -276,21 +266,42 @@ public class Board {
 		return false;
 	}
 
+	private boolean verifyBounds(Point origin, Point target) {
+		if (origin.x < 0 || origin.y < 0 || origin.x > 7 || origin.y > 7) {
+			return false;
+		}
+		if (target.x < 0 || target.y < 0 || target.x > 7 || target.y > 7) {
+			return false;
+		}
+		return true;
+	}
+
 	public boolean executeMove(Point origin, Point target, char promotion) {
+		// Check bounds of origin and target
+		if (!verifyBounds(origin, target)) {
+			return false;
+		}
+
+		// Check that piece exists and that it belongs to the current player
+		if (board[origin.x][origin.y] == null || board[origin.x][origin.y].getColor() != turn) {
+			return false;
+		}
+
 		saveStateToVirtualStorage();
 
 		Piece p = vBoard[origin.x][origin.y];
 		char color = p.getColor();
 
-		// Checking for special moves first
+		// Checking for/performing special moves first
 
 		// Castling
 		if (p instanceof King) {
 			if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 2 && target.y == 0) {
-				// White Queenside Castle attempt detected
+				// White Queen-side Castle attempt detected
 				Piece rook = vBoard[0][0];
-				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[1][0] == null
-						&& board[2][0] == null && board[3][0] == null) {
+				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
+						&& !((Rook) rook).hasMoved && board[1][0] == null && board[2][0] == null
+						&& board[3][0] == null) {
 					// Check if king is to pass through attacked squares.
 					for (Piece q : blackPieces) {
 						for (int i = 1; i <= 3; i++) {
@@ -322,10 +333,10 @@ public class Board {
 					return false;
 				}
 			} else if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 6 && target.y == 0) {
-				// White Kingside Castle attempt detected
+				// White King-side Castle attempt detected
 				Piece rook = board[0][0];
-				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[5][0] == null
-						&& board[6][0] == null) {
+				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
+						&& !((Rook) rook).hasMoved && board[5][0] == null && board[6][0] == null) {
 					// Check if king is to pass through attacked squares.
 					for (Piece q : blackPieces) {
 						for (int i = 5; i <= 6; i++) {
@@ -356,10 +367,11 @@ public class Board {
 					return false;
 				}
 			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 2 && target.y == 7) {
-				// Black Queenside Castle attempt detected
+				// Black Queen-side Castle attempt detected
 				Piece rook = board[0][7];
-				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[1][7] == null
-						&& board[2][7] == null && board[3][7] == null) {
+				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
+						&& !((Rook) rook).hasMoved && board[1][7] == null && board[2][7] == null
+						&& board[3][7] == null) {
 					// Check if king is to pass through attacked squares.
 					for (Piece q : blackPieces) {
 						for (int i = 1; i <= 3; i++) {
@@ -390,10 +402,10 @@ public class Board {
 					return false;
 				}
 			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 6 && target.y == 7) {
-				// Black Kingside Castle attempt detected
+				// Black King-side Castle attempt detected
 				Piece rook = board[0][0];
-				if (!((King) p).hasMoved && rook instanceof Rook && !((Rook) rook).hasMoved && board[5][7] == null
-						&& board[6][7] == null) {
+				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
+						&& !((Rook) rook).hasMoved && board[5][7] == null && board[6][7] == null) {
 					// Check if king is to pass through attacked squares.
 					for (Piece q : blackPieces) {
 						for (int i = 5; i <= 6; i++) {
@@ -471,7 +483,11 @@ public class Board {
 				}
 				// Special Move
 			} else if (Math.abs(origin.y - target.y) == 2) {
-				enpassantPawns.add((Pawn) p);
+				if ((color == 'w' && origin.y == 1) || (color == 'b' && origin.y == 6)) {
+					enpassantPawns.add((Pawn) p);
+				} else {
+					return false;
+				}
 				// Promotion
 			} else if (color == 'w' && target.y == 7) {
 				Piece temp = p;
@@ -518,6 +534,16 @@ public class Board {
 		}
 
 		// All Special Cases handled.
+
+		// Piece must be allowed to move to target.
+		if (p.getMobility()[target.x][target.y] == 0) {
+			return false;
+		}
+
+		// Path must be clear.
+		if (!isPathClear(board, origin, target)) {
+			return false;
+		}
 
 		vBoard[origin.x][origin.y] = null;
 		vBoard[target.x][target.y] = p;
@@ -581,7 +607,7 @@ public class Board {
 		return false;
 	}
 
-	private void initializeBoard() {
+	public void initializeBoard() {
 		board[0][7] = new Rook('b', new Point(0, 7));
 		board[1][7] = new Knight('b', new Point(1, 7));
 		board[2][7] = new Bishop('b', new Point(2, 7));
