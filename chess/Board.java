@@ -669,7 +669,7 @@ public class Board {
 	// Interface with match logic that allows the implementer to determine if
 	// the match can continue
 	public boolean matchCanContinue() {
-		return true;
+		return !(checkMate() || inStalemate());
 	}
 
 	// Prints final state of the match

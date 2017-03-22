@@ -1,7 +1,9 @@
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 import pieces.Bishop;
 import pieces.King;
@@ -15,6 +17,14 @@ public class Chess {
 
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	public static Board b = null;
+	public static boolean pendingDraw = true;
+	public static Point origin = null;
+	public static Point target = null;
+	public static String end = "";
+	public static char promotion = 'Q';
+	
+	static Scanner scan = null;
+	static int lineNum = 1;
 
 	/**
 	 * Description...
@@ -23,30 +33,34 @@ public class Chess {
 	 * @return .....
 	 */
 	public static void main(String args[]) {
+//		try {
+//			scan = new Scanner(new File("ex1.txt"));
+//		} catch (Exception e) {
+//			System.out.println("Error");
+//			return;
+//		}
+		
 		System.out.println("Welcome to Chess.");
 		b = new Board();
 
-		// (tempTurn == 'w' ? "White's move: " : "Blacks's move: ");
-//		System.out.println(b);
-//		System.out.println("\n" + (tempTurn == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
 		do{
+			
+			if(b.inCheck(b.getTurn(), b.board, b.whitePieces, b.blackPieces)){
+				System.out.println("Check");
+			}
+			
 			System.out.println(b);
 			
-			Object[] parts = readMove();
-			Point origin = (Point) parts[0];
-			Point target = (Point) parts[1];
-			char promotion = (char) parts[2];
+			readMoveTest();
+//			readMove();
 			
 //			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
-			while (! b.executeMove(origin, target, promotion)){
+			while (! b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion)){
 				System.out.println("Illegal move, try again");
-				parts = readMove();
-				origin = (Point) parts[0];
-				target = (Point) parts[1];
-				promotion = (char) parts[2];
+				readMove();
 			}
-			
+
 			b.toggleTurn();
 			
 			// Move will be made by this point
@@ -64,13 +78,10 @@ public class Chess {
 	 * @param ...
 	 * @return .....
 	 */
-	private static Object[] readMove() {
+	private static void readMove() {
 		String input = "";
-		
-		Point op = null;
-		Point tp = null;
 
-		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Blacks's move: ")); // change tempTurn to b.getTurn()
+		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Black's move: ")); // change tempTurn to b.getTurn()
 		
 		while (true) {
 			try {
@@ -82,32 +93,63 @@ public class Chess {
 		}
 //		System.out.println("MOVE: " + input);
 		
-		if(input.contains("resign")){
-			
+		if(input.equals("resign")){
+			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
+			System.exit(0); // end match
+		} else if (input.equals("draw") && pendingDraw) {
+			System.exit(0); // draw was waiting and is now confirmed
 		}
 		
-		String origin = input.split(" ")[0];
-		String target = input.split(" ")[1];
-		char pro = 'Q';
-		if(input.split(" ").length > 2){
-			pro = input.split(" ")[1].charAt(0);
-		}
-		
-//		System.out.println("Origin: " + origin + "\nTarget: " + target);
+		String[] parts = input.split(" ");
 		
 		// (x,y)
-		op = new Point(origin.charAt(0) - 'a', origin.charAt(1) - '1');
-		tp = new Point(target.charAt(0) - 'a', target.charAt(1) - '1');
+		origin = new Point(parts[0].charAt(0) - 'a', parts[0].charAt(1) - '1');
+		target = new Point(parts[1].charAt(0) - 'a', parts[1].charAt(1) - '1');
 		
-		// (y,x)
-//		op = new Point(origin.charAt(1) - '1', origin.charAt(0) - 'a');
-//		tp = new Point(target.charAt(1) - '1', target.charAt(0) - 'a');
+		promotion = 'Q';
+		end = "";
 		
-//		System.out.println("Origin: " + op + "\nTarget: " + tp + "\nPromotion: " + pro );
+		if(parts.length > 2){
+			end = parts[parts.length - 1];
+			promotion = parts[2].charAt(0);
+		}
 		
-		Object output[] = {op, tp, pro};
+		pendingDraw = end.equals("draw?");
+	}
+	
+	private static void readMoveTest() {
+		String input = "";
 		
-		return output;
+		input = scan.nextLine();
+		System.out.println("Line " + lineNum);
+		lineNum += 1;
+
+		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Blacks's move: ") + input); // change tempTurn to b.getTurn()
+		
+//		System.out.println("MOVE: " + input);
+		
+		if(input.equals("resign")){
+			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
+			System.exit(0); // end match
+		} else if (input.equals("draw") && pendingDraw) {
+			System.exit(0); // draw was waiting and is now confirmed
+		}
+		
+		String[] parts = input.split(" ");
+		
+		// (x,y)
+		origin = new Point(parts[0].charAt(0) - 'a', parts[0].charAt(1) - '1');
+		target = new Point(parts[1].charAt(0) - 'a', parts[1].charAt(1) - '1');
+		
+		promotion = 'Q';
+		end = "";
+		
+		if(parts.length > 2){
+			end = parts[parts.length - 1];
+			promotion = parts[2].charAt(0);
+		}
+		
+		pendingDraw = end.equals("draw?");
 	}
 
 	private static void printMobility(int[][] mob) {
