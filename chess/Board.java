@@ -154,10 +154,10 @@ public class Board {
 			}
 
 		} else if (Math.abs((origin.x - target.x)) == Math.abs((origin.y - target.y))) { // check
-																		// diagonal
-																		// of
-																		// slope
-																		// 1
+			// diagonal
+			// of
+			// slope
+			// 1
 
 			int orientationX = ((origin.x > target.x) ? -1 : 1);
 			int currX = origin.x + orientationX;
@@ -178,8 +178,8 @@ public class Board {
 			}
 		}
 
-
-		if (board[target.x][target.y] != null && board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
+		if (board[target.x][target.y] != null
+				&& board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
 			return false;
 		}
 
@@ -347,7 +347,7 @@ public class Board {
 				}
 			} else if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 6 && target.y == 0) {
 				// White King-side Castle attempt detected
-				Piece rook = board[0][0];
+				Piece rook = board[7][0];
 				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
 						&& !((Rook) rook).hasMoved && board[5][0] == null && board[6][0] == null) {
 					// Check if king is to pass through attacked squares.
@@ -386,7 +386,7 @@ public class Board {
 						&& !((Rook) rook).hasMoved && board[1][7] == null && board[2][7] == null
 						&& board[3][7] == null) {
 					// Check if king is to pass through attacked squares.
-					for (Piece q : blackPieces) {
+					for (Piece q : whitePieces) {
 						for (int i = 1; i <= 3; i++) {
 							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
 								return false;
@@ -420,7 +420,7 @@ public class Board {
 				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
 						&& !((Rook) rook).hasMoved && board[5][7] == null && board[6][7] == null) {
 					// Check if king is to pass through attacked squares.
-					for (Piece q : blackPieces) {
+					for (Piece q : whitePieces) {
 						for (int i = 5; i <= 6; i++) {
 							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
 								return false;
@@ -625,16 +625,17 @@ public class Board {
 		return false;
 	}
 
-	// Interface with match logic that allows the implementer to determine if the match can continue
-	public boolean matchCanContinue(){
+	// Interface with match logic that allows the implementer to determine if
+	// the match can continue
+	public boolean matchCanContinue() {
 		return true;
 	}
-	
+
 	// Prints final state of the match
-	public void printEndState(){
+	public void printEndState() {
 		System.out.println("The Match is over");
 	}
-	
+
 	public void initializeBoard() {
 		board[0][7] = new Rook('b', new Point(0, 7));
 		board[1][7] = new Knight('b', new Point(1, 7));
