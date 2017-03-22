@@ -25,6 +25,7 @@ public class Chess {
 	
 	static Scanner scan = null;
 	static int lineNum = 1;
+	static final boolean AUTO = true;
 
 	/**
 	 * Description...
@@ -36,7 +37,7 @@ public class Chess {
 		try {
 			scan = new Scanner(new File("ex1.txt"));
 		} catch (Exception e) {
-			System.out.println("Error");
+			System.out.println("Test File not found Error");
 			return;
 		}
 		
@@ -51,8 +52,11 @@ public class Chess {
 			
 			System.out.println(b);
 			
-			readMoveTest();
-//			readMove();
+			if(AUTO){
+				readMoveTest();
+			} else {
+				readMove();
+			}
 			
 //			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
