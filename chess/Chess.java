@@ -24,7 +24,6 @@ public class Chess {
 	public static char promotion = 'Q';
 	
 	static Scanner scan = null;
-	static int lineNum = 1;
 	static final boolean AUTO = true;
 
 	/**
@@ -34,12 +33,15 @@ public class Chess {
 	 * @return .....
 	 */
 	public static void main(String args[]) {
+		
+		// AUTO
 		try {
 			scan = new Scanner(new File("ex1.txt"));
 		} catch (Exception e) {
 			System.out.println("Test File not found Error");
 			return;
 		}
+		// END AUTO
 		
 		System.out.println("Welcome to Chess.");
 		b = new Board();
@@ -52,13 +54,16 @@ public class Chess {
 			
 			System.out.println(b);
 			
+			// AUTO
 			if(AUTO){
 				readMoveTest();
 			} else {
+			// END AUTO
 				readMove();
+			// AUTO
 			}
+			// END AUTO
 			
-//			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
 			while (! b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion)){
 				System.out.println("Illegal move, try again");
@@ -71,7 +76,6 @@ public class Chess {
 		} while(b.matchCanContinue()); // && not stalemate
 		// mobilityTestSuite();
 		
-		b.printEndState();
 		
 	}
 	
@@ -125,9 +129,6 @@ public class Chess {
 		String input = "";
 		
 		input = scan.nextLine();
-		System.out.println("Line " + lineNum);
-		lineNum += 1;
-
 		System.out.println((b.getTurn() == 'w' ? "White's move: " : "Black's move: ") + input); // change tempTurn to b.getTurn()
 		
 //		System.out.println("MOVE: " + input);

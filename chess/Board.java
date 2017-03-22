@@ -673,11 +673,6 @@ public class Board {
 		return !(checkMate() || inStalemate());
 	}
 
-	// Prints final state of the match
-	public void printEndState() {
-		System.out.println("The Match is over");
-	}
-
 	public void initializeBoard() {
 		board[0][7] = new Rook('b', new Point(0, 7));
 		board[1][7] = new Knight('b', new Point(1, 7));
