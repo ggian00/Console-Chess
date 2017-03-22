@@ -416,7 +416,7 @@ public class Board {
 				}
 			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 6 && target.y == 7) {
 				// Black King-side Castle attempt detected
-				Piece rook = board[0][0];
+				Piece rook = board[7][7];
 				if (!((King) p).hasMoved && !inCheck(color, board, whitePieces, blackPieces) && rook instanceof Rook
 						&& !((Rook) rook).hasMoved && board[5][7] == null && board[6][7] == null) {
 					// Check if king is to pass through attacked squares.
