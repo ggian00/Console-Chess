@@ -51,8 +51,8 @@ public class Chess {
 			
 			System.out.println(b);
 			
-			readMoveTest();
-//			readMove();
+//			readMoveTest();
+			readMove();
 			
 //			System.out.println(origin + "\n"  + target + "\n" + promotion + "\n" );
 
