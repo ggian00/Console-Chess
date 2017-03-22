@@ -211,7 +211,7 @@ public class Board {
 	 */
 	public boolean inCheck(char color, Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces) {
 
-		Piece king = getKing(color);
+		Piece king = getKing((color == 'w' ? whitePieces : blackPieces));
 		int kingX = (int) king.location.getX();
 		int kingY = (int) king.location.getY();
 		// Want to see if opponent pieces can attack king
@@ -227,8 +227,7 @@ public class Board {
 		return false;
 	}
 
-	private Piece getKing(char color) {
-		ArrayList<Piece> searchList = (color == 'b' ? blackPieces : whitePieces);
+	private Piece getKing(ArrayList<Piece> searchList) {
 		for (Piece p : searchList) {
 			if (p instanceof King) {
 				return p;
@@ -348,10 +347,14 @@ public class Board {
 						return false;
 					}
 
+					whitePieces.remove(board[origin.x][origin.y]);
+					whitePieces.remove(board[0][0]);
 					board[2][0] = p;
 					board[3][0] = rook;
 					board[4][0] = null;
 					board[0][0] = null;
+					whitePieces.add(p);
+					whitePieces.add(rook);
 
 					return true;
 
@@ -383,10 +386,14 @@ public class Board {
 						return false;
 					}
 
+					whitePieces.remove(board[origin.x][origin.y]);
+					whitePieces.remove(board[7][0]);
 					board[6][0] = p;
 					board[5][0] = rook;
 					board[4][0] = null;
 					board[7][0] = null;
+					whitePieces.add(p);
+					whitePieces.add(rook);
 
 					return true;
 				} else {
@@ -418,10 +425,14 @@ public class Board {
 						return false;
 					}
 
+					blackPieces.remove(board[origin.x][origin.y]);
+					blackPieces.remove(board[0][7]);
 					board[2][7] = p;
 					board[3][7] = rook;
 					board[4][7] = null;
 					board[0][7] = null;
+					blackPieces.add(p);
+					blackPieces.add(rook);
 
 					return true;
 				} else {
@@ -452,10 +463,14 @@ public class Board {
 						return false;
 					}
 
+					blackPieces.remove(board[origin.x][origin.y]);
+					blackPieces.remove(board[7][7]);
 					board[6][7] = p;
 					board[5][7] = rook;
 					board[4][7] = null;
 					board[7][7] = null;
+					blackPieces.add(p);
+					blackPieces.add(rook);
 
 					return true;
 				} else {
@@ -481,9 +496,11 @@ public class Board {
 					}
 
 					blackPieces.remove(board[target.x][4]);
+					whitePieces.remove(board[origin.x][origin.y]);
 					board[origin.x][origin.y] = null;
 					board[target.x][4] = null;
 					board[target.x][target.y] = p;
+					whitePieces.add(p);
 
 					return true;
 				} else {
@@ -500,9 +517,11 @@ public class Board {
 					}
 
 					whitePieces.remove(board[target.x][3]);
+					blackPieces.remove(board[origin.x][origin.y]);
 					board[origin.x][origin.y] = null;
 					board[target.x][3] = null;
 					board[target.x][target.y] = p;
+					blackPieces.add(p);
 
 					return true;
 				} else {
@@ -617,8 +636,6 @@ public class Board {
 
 	private void saveStateToVirtualStorage(Piece[][] vBoard, ArrayList<Piece> vWhitePieces,
 			ArrayList<Piece> vBlackPieces) {
-		vWhitePieces = new ArrayList<Piece>();
-		vBlackPieces = new ArrayList<Piece>();
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				if (board[x][y] != null) {
