@@ -1,3 +1,7 @@
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -117,7 +121,16 @@ public class Board {
 		sb.append('\n');
 		return sb.toString();
 	}
-
+	
+	/**
+	 *
+	 *
+	 *
+	 * @param  board
+	 * @param  origin
+	 * @param  target
+	 * @return the clearness of the path between the two given points on the given board/
+	 */
 	private boolean isPathClear(Piece[][] board, Point origin, Point target) {
 		if (origin.equals(target)) {
 			return false;
@@ -182,10 +195,21 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 *
+	 * Gets the current value of turn of the current instance.
+	 *
+	 * @return current instance turn field
+	 */
 	public char getTurn() {
 		return turn;
 	}
 
+	/**
+	 *
+	 * Toggles the current player color. Sets turn to w if b, and vice versa
+	 *
+	 */
 	public void toggleTurn() {
 		turn = (turn == 'w' ? 'b' : 'w');
 		ArrayList<Pawn> pawnsToRemove = new ArrayList<Pawn>();
@@ -201,13 +225,15 @@ public class Board {
 	}
 
 	/**
-	 * Is the specified color in check?
+	 *
+	 * Iterates over every opposing color piece and determines if the king is in any of their mobilities.
+	 * If the king is capturable returns true.
 	 * 
 	 * @param color
 	 * @param board
 	 * @param whitePieces
 	 * @param blackPieces
-	 * @return
+	 * @return if the given color's king is in check.
 	 */
 	public boolean inCheck(char color, Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces) {
 
@@ -227,6 +253,13 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 *
+	 * Finds the king in a list of pieces, return null if no king is found
+	 * 
+	 * @param searchList list of pieces where king is located
+	 * @return Piece object of 
+	 */
 	private Piece getKing(ArrayList<Piece> searchList) {
 		for (Piece p : searchList) {
 			if (p instanceof King) {

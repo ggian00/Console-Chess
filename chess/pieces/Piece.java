@@ -1,3 +1,7 @@
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 package pieces;
 
 import java.awt.Point;
