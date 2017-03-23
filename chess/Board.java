@@ -1,7 +1,3 @@
-/**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -13,6 +9,15 @@ import pieces.Piece;
 import pieces.Queen;
 import pieces.Rook;
 
+/**
+ * This class stores all of the Piece objects on the board. It keeps track of
+ * which player has which pieces. The class can move pieces via its executeMove
+ * method, as well as allow the user to toggle turns, check for checkmate and
+ * stalemate, and print out a visual representation of the board.
+ * 
+ * @author David Parsons
+ * @author Phil Plucinski
+ */
 public class Board {
 
 	Piece[][] board = new Piece[8][8];
@@ -23,10 +28,13 @@ public class Board {
 
 	private char turn = 'w';
 
+	/**
+	 * Creates a new Board object with pieces initialized to the default chess
+	 * board layout.
+	 */
 	Board() {
 		initializeBoard();
 	}
-
 
 	/**
 	 * Prints out the chess board. Empty spaces of the same parity are black
@@ -63,15 +71,19 @@ public class Board {
 		sb.append('\n');
 		return sb.toString();
 	}
-	
+
 	/**
+	 * Checks to see if there are no pieces on the board between two points on
+	 * the board.
 	 *
-	 *
-	 *
-	 * @param  board
-	 * @param  origin
-	 * @param  target
-	 * @return the clearness of the path between the two given points on the given board/
+	 * @param board
+	 *            2D array of Pieces to be examined
+	 * @param origin
+	 *            Origin point
+	 * @param target
+	 *            Target point
+	 * @return true if there are no pieces between origin and target; false
+	 *         otherwise.
 	 */
 	private boolean isPathClear(Piece[][] board, Point origin, Point target) {
 		if (origin.equals(target)) {
@@ -138,19 +150,16 @@ public class Board {
 	}
 
 	/**
+	 * Gets the current value of 'turn' in the current instance.
 	 *
-	 * Gets the current value of turn of the current instance.
-	 *
-	 * @return current instance turn field
+	 * @return current instance 'turn' field
 	 */
 	public char getTurn() {
 		return turn;
 	}
 
 	/**
-	 *
 	 * Toggles the current player color. Sets turn to w if b, and vice versa
-	 *
 	 */
 	public void toggleTurn() {
 		turn = (turn == 'w' ? 'b' : 'w');
@@ -167,15 +176,19 @@ public class Board {
 	}
 
 	/**
-	 *
-	 * Iterates over every opposing color piece and determines if the king is in any of their mobilities.
-	 * If the king is capturable returns true.
+	 * Iterates over every opposing color piece and determines if the king is in
+	 * any of their mobilities with a clear path. If the king is capturable
+	 * returns true.
 	 * 
 	 * @param color
+	 *            Color of the player whose pieces are to be checked.
 	 * @param board
+	 *            2D array of Pieces to be examined
 	 * @param whitePieces
+	 *            white Piece arrayList to be examined
 	 * @param blackPieces
-	 * @return if the given color's king is in check.
+	 *            black Piece arrayList to be examined
+	 * @return true if the King is in check; false otherwise
 	 */
 	public boolean inCheck(char color, Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces) {
 
@@ -196,11 +209,11 @@ public class Board {
 	}
 
 	/**
-	 *
-	 * Finds the king in a list of pieces, return null if no king is found
+	 * Finds the king in a list of pieces, return null if no king is found.
 	 * 
-	 * @param searchList list of pieces where king is located
-	 * @return Piece object of 
+	 * @param searchList
+	 *            ArrayList of pieces where king is located
+	 * @return King object if found; null otherwise
 	 */
 	private Piece getKing(ArrayList<Piece> searchList) {
 		for (Piece p : searchList) {
@@ -211,6 +224,15 @@ public class Board {
 		return null;
 	}
 
+	/**
+	 * Checks to see if the player of the specified color has any valid moves to
+	 * be made that would also not put them in check.
+	 * 
+	 * @param color
+	 *            color of player to be examined.
+	 * @return true if player has valid moves that would not put them in check;
+	 *         false otherwise
+	 */
 	private boolean existValidMoves(char color) {
 		ArrayList<Piece> searchList = (color == 'b' ? blackPieces : whitePieces);
 
@@ -235,6 +257,14 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * Checks to see if the argument Pawn is contained in the list of
+	 * enpassant-eligible pawns.
+	 * 
+	 * @param p
+	 *            Pawn to be examined.
+	 * @return true if Pawn p is eligible to perform enpassant; false otherwise.
+	 */
 	private boolean pawnIsEnpassant(Pawn p) {
 		for (Pawn q : enpassantPawns) {
 			if (p.equals(q)) {
@@ -244,6 +274,15 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * Checks to see if origin and target points are within the 8x8 chess board.
+	 * 
+	 * @param origin
+	 *            1st Point to be examined.
+	 * @param target
+	 *            2nd Point to be examined.
+	 * @return true if points are within bounds; false otherwise
+	 */
 	private boolean verifyBounds(Point origin, Point target) {
 		if (origin.x < 0 || origin.y < 0 || origin.x > 7 || origin.y > 7) {
 			return false;
@@ -254,6 +293,26 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Performs move on piece located at origin based on its target. Checks to
+	 * see if the move is valid according to the capabilities of each piece and
+	 * whether the move would put the player in check.
+	 * 
+	 * @param board
+	 *            2D Piece array to be used as the reference board.
+	 * @param whitePieces
+	 *            ArrayList of white pieces to be referenced.
+	 * @param blackPieces
+	 *            ArrayList of black pieces to be referenced.
+	 * @param origin
+	 *            Point containing the piece to be moved.
+	 * @param target
+	 *            Destination Point
+	 * @param promotion
+	 *            char indicating the desired promotion, if applicable; ' '
+	 *            otherwise
+	 * @return true if move is legal and has been performed; false otherwise
+	 */
 	public boolean executeMove(Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces,
 			Point origin, Point target, char promotion) {
 
@@ -586,6 +645,17 @@ public class Board {
 		return true;
 	}
 
+	/**
+	 * Creates and returns a new Piece based on desired promotion with color and
+	 * location attributes of original pawn.
+	 * 
+	 * @param promotion
+	 *            char representing desired Piece subclass {Q(ueen), (K)N(ight),
+	 *            R(ook), B(ishop)}
+	 * @param pawn
+	 *            Pawn to be promoted
+	 * @return
+	 */
 	private Piece promote(char promotion, Piece pawn) {
 		Piece promotedPiece = null;
 		switch (promotion) {
@@ -605,6 +675,17 @@ public class Board {
 		return promotedPiece;
 	}
 
+	/**
+	 * Creates a copy of the board and piece lists and saves them to the
+	 * argument lists.
+	 * 
+	 * @param vBoard
+	 *            2D Piece array copy destination
+	 * @param vWhitePieces
+	 *            ArrayList of white pieces copy destination
+	 * @param vBlackPieces
+	 *            ArrayList of black pieces copy destination
+	 */
 	private void saveStateToVirtualStorage(Piece[][] vBoard, ArrayList<Piece> vWhitePieces,
 			ArrayList<Piece> vBlackPieces) {
 		for (int x = 0; x < 8; x++) {
@@ -621,6 +702,11 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Checks to see if either player is in checkmate
+	 * 
+	 * @return true if a player is checkmated; false otherwise
+	 */
 	public boolean checkMate() {
 		if (turn == 'w' && inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
 			System.out.println(this);
@@ -636,6 +722,11 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * Checks to see if a stalemate has occurred.
+	 * 
+	 * @return true if statemate is detected; false otherwise
+	 */
 	public boolean inStalemate() {
 		if (turn == 'w' && !inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
 			System.out.println(this);
@@ -650,18 +741,27 @@ public class Board {
 		return false;
 	}
 
-	// Interface with match logic that allows the implementer to determine if
-	// the match can continue
+	/**
+	 * Checks to see if a checkmate or stalemate has occurred.
+	 * 
+	 * @return true if checkmate or stalemate has been detected; false otherwise
+	 */
 	public boolean matchCanContinue() {
 		return !(checkMate() || inStalemate());
 	}
 
-	// Prints final state of the match
+	/**
+	 * Prints "The Match is over"
+	 * 
+	 */
 	public void printEndState() {
 		System.out.println("The Match is over");
 	}
 
-	public void initializeBoard() {
+	/**
+	 * Populates the board with all 32 chess pieces in their default layout.
+	 */
+	private void initializeBoard() {
 		board[0][7] = new Rook('b', new Point(0, 7));
 		board[1][7] = new Knight('b', new Point(1, 7));
 		board[2][7] = new Bishop('b', new Point(2, 7));
