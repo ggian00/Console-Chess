@@ -103,7 +103,6 @@ public class Chess {
 		while (true) {
 			try {
 				input = reader.readLine();
-				System.out.println("");
 				break;
 			} catch (IOException e) {
 			}
