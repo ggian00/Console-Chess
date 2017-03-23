@@ -1,25 +1,40 @@
-/**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
 package pieces;
 
 import java.awt.Point;
 
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 public class King extends Piece {
-
+	
+	
+	/**
+	 * States whether or not thing king has moved, used for special moves
+	 */
 	public boolean hasMoved = false;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param color piece color
+	 * @param location intial location
+	 */
 	public King(char color, Point location) {
 		super(color, location);
 	}
 
 	/**
-	 * Returns a int array that representing the mobility of the piece Copy 0 1
-	 * 2 notes from doc
+	 * Returns a int array that representing the mobility of the piece
+	 * or positions that the piece could move
+	 * 0s, 1s, 2s, in each position
+	 * 0 - not accessible
+	 * 1 - only for move
+	 * 2 - capture (implies move)
 	 *
 	 * @return mobility of game piece.
 	 */
+	@Override
 	public int[][] getMobility() {
 
 		/*
@@ -67,10 +82,10 @@ public class King extends Piece {
 	}
 
 	/**
-	 * Returns the string representation of a pawn to be used in the ascii board
+	 * Returns the string representation of a king to be used in the ascii board
 	 * representation.
 	 *
-	 * @return the ascii representation of a pawn.
+	 * @return the ascii representation of a king.
 	 */
 	public String toString() {
 		return super.toString() + 'K';
@@ -82,7 +97,12 @@ public class King extends Piece {
 			hasMoved = true;
 		}
 	}
-
+	
+	/**
+	 * Creates and return a copy of the current king instance
+	 *
+	 * @return new king copy
+	 */
 	public Piece copy() {
 		return new King(color, new Point(location.x, location.y));
 	}

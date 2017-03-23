@@ -1,21 +1,43 @@
-/**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
 package pieces;
 
 import java.awt.Point;
 
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 public class Bishop extends Piece {
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param color piece color
+	 * @param location intial location
+	 */
 	public Bishop(char color, Point location) {
 		super(color, location);
 	}
 
+	/**
+	 * Returns the string representation of a bishop to be used in the ascii board
+	 * representation.
+	 *
+	 * @return the ascii representation of a bishop.
+	 */
 	public String toString() {
 		return super.toString() + 'B';
 	}
 
+	/**
+	 * Returns a int array that representing the mobility of the piece
+	 * or positions that the piece could move
+	 * 0s, 1s, 2s, in each position
+	 * 0 - not accessible
+	 * 1 - only for move
+	 * 2 - capture (implies move)
+	 *
+	 * @return mobility of game piece.
+	 */
 	@Override
 	public int[][] getMobility() {
 		int mobility[][] = new int[8][8];

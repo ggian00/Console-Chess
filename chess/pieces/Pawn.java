@@ -1,25 +1,37 @@
-/**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
 package pieces;
 
 import java.awt.Point;
 
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 public class Pawn extends Piece {
 
+	
 	public int turnsSinceSpecialMove = 0;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param color piece color
+	 * @param location intial location
+	 */
 	public Pawn(char color, Point location) {
 		super(color, location);
 	}
 
 	/**
-	 * Returns a int array that representing the mobility of the piece Copy 0 1
-	 * 2 notes from doc
+	 * Returns a int array that representing the mobility of the piece
+	 * or positions that the piece could move
+	 * 0s, 1s, 2s, in each position
+	 * 0 - not accessible
+	 * 1 - only for move
+	 * 2 - capture (implies move)
 	 *
 	 * @return mobility of game piece.
 	 */
+	@Override
 	public int[][] getMobility() {
 
 		/*

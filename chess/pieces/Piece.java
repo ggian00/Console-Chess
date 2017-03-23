@@ -1,41 +1,61 @@
- /**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
+
 package pieces;
 
 import java.awt.Point;
 
+/**
+* @author      David Parsons
+* @author      Phil Plucinski
+*/
 public abstract class Piece {
 
+	/**
+	 * color of piece
+	 */
 	protected char color;
+
+	/**
+	 * Point (x,y) location of piece
+	 */
 	public Point location;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param color piece color
+	 * @param location intial location
+	 */
 	Piece(char color, Point location) {
-		if (color != 'w' || color != 'b') {
-			// throw exception
-			// error
-		}
-		if (location.getX() > 7 && location.getX() < 0 && location.getY() > 7 && location.getY() < 0) {
-			// throw exception
-			// error
-		}
 		this.color = color;
 		this.location = location;
 	}
 
 	/**
-	 * Returns a int array that representing the mobility of the piece Copy 0 1
-	 * 2 notes from doc
+	 * Returns a int array that representing the mobility of the piece
+	 * or positions that the piece could move
+	 * 0s, 1s, 2s, in each position
+	 * 0 - not accessible
+	 * 1 - only for move
+	 * 2 - capture (implies move)
 	 *
 	 * @return mobility of game piece.
 	 */
 	public abstract int[][] getMobility();
 
+	/**
+	 * Updates pieces location to the given location
+	 *
+	 * @return new piece location
+	 */
 	public void move(Point p) {
 		location = p;
 	}
 
+	/**
+	 * Creates and return a copy of the current piece instance
+	 *
+	 * @return new piece copy
+	 */
 	public abstract Piece copy();
 
 	/**
@@ -48,6 +68,11 @@ public abstract class Piece {
 		return color + "";
 	}
 
+	/**
+	 * Gets the color of the current piece instance
+	 *
+	 * @return color of the piece
+	 */
 	public char getColor() {
 		return this.color;
 	}

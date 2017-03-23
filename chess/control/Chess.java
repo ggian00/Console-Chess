@@ -1,7 +1,4 @@
-/**
- * @author      David Parsons
- * @author      Phil Plucinski
- */
+package control;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +14,10 @@ import pieces.Piece;
 import pieces.Queen;
 import pieces.Rook;
 
+/**
+ * @author      David Parsons
+ * @author      Phil Plucinski
+ */
 public class Chess {
 
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -28,7 +29,7 @@ public class Chess {
 	public static char promotion = 'Q';
 	
 	static Scanner scan = null;
-	static final boolean AUTO = true;
+	static final boolean AUTO = false;
 
 	/**
 	 * Description...
@@ -76,19 +77,16 @@ public class Chess {
 
 			b.toggleTurn();
 			
-			// Move will be made by this point
-		} while(b.matchCanContinue()); // && not stalemate
-		// mobilityTestSuite();
+		} while(b.matchCanContinue());
 		
 		
 	}
 	
 
 	/**
-	 * Description...
+	 * Consumes input from console and updates static data fields
+	 * accordingly in an attempt to prepare for move execution
 	 *
-	 * @param ...
-	 * @return .....
 	 */
 	private static void readMove() {
 		String input = "";
@@ -103,7 +101,6 @@ public class Chess {
 			} catch (IOException e) {
 			}
 		}
-//		System.out.println("MOVE: " + input);
 		
 		if(input.equals("resign")){
 			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
@@ -159,65 +156,5 @@ public class Chess {
 		}
 		
 		pendingDraw = end.equals("draw?");
-	}
-
-	private static void printMobility(int[][] mob) {
-		for (int y = 7; y >= 0; y--) {
-			for (int x = 0; x < 8; x++) {
-				System.out.print(mob[x][y] + " ");
-			}
-			System.out.println(" " + y);
-		}
-		System.out.println();
-		for (int col = 0; col < 8; col++) {
-			System.out.print((char) ('a' + col) + " ");
-		}
-		System.out.println('\n');
-	}
-
-	private static void mobilityTestSuite() {
-		// Pawn
-		Piece testPawn = new Pawn('b', new Point(4, 6));
-		int[][] testmobpawn = testPawn.getMobility();
-		testmobpawn[(int) testPawn.location.getX()][(int) testPawn.location.getY()] = 5;
-		System.out.println("Testing Pawn mobility at " + testPawn.location.getX() + " " + testPawn.location.getY());
-		printMobility(testmobpawn);
-
-		// Rook
-		Piece testRook = new Rook('b', new Point(3, 6));
-		int[][] testmobrook = testRook.getMobility();
-		testmobrook[(int) testRook.location.getX()][(int) testRook.location.getY()] = 5;
-		System.out.println("Testing Rook mobility at " + testRook.location.getX() + " " + testRook.location.getY());
-		printMobility(testmobrook);
-
-		// Knight
-		Piece testKnight = new Knight('b', new Point(3, 7));
-		int[][] testmobknight = testKnight.getMobility();
-		testmobknight[(int) testKnight.location.getX()][(int) testKnight.location.getY()] = 5;
-		System.out
-				.println("Testing Knight mobility at " + testKnight.location.getX() + " " + testKnight.location.getY());
-		printMobility(testmobknight);
-
-		// Bishop
-		Piece testBishop = new Bishop('w', new Point(5, 3));
-		int[][] testmobbish = testBishop.getMobility();
-		testmobbish[(int) testBishop.location.getX()][(int) testBishop.location.getY()] = 5;
-		System.out
-				.println("Testing Bishop mobility at " + testBishop.location.getX() + " " + testBishop.location.getY());
-		printMobility(testmobbish);
-
-		// Queen
-		Piece testQueen = new Queen('b', new Point(3, 6));
-		int[][] testmobqueen = testQueen.getMobility();
-		testmobqueen[(int) testQueen.location.getX()][(int) testQueen.location.getY()] = 5;
-		System.out.println("Testing Queen mobility at " + testQueen.location.getX() + " " + testQueen.location.getY());
-		printMobility(testmobqueen);
-
-		// King
-		Piece testKing = new King('b', new Point(3, 7));
-		int[][] testmobking = testKing.getMobility();
-		testmobking[(int) testKing.location.getX()][(int) testKing.location.getY()] = 5;
-		System.out.println("Testing King mobility at " + testKing.location.getX() + " " + testKing.location.getY());
-		printMobility(testmobking);
 	}
 }
