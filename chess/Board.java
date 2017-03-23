@@ -27,64 +27,6 @@ public class Board {
 		initializeBoard();
 	}
 
-	/***
-	 * public boolean movePiece(Point piecePos, Point targetPos) {
-	 * 
-	 * /////////////////////////////////////////////////// // Won't this cause
-	 * an ArrayOutOfBoundsExe ? // // I think we should either manually check
-	 * bounds// // Or put this in a try-catch //
-	 * /////////////////////////////////////////////////// Piece selected =
-	 * board[piecePos.x][piecePos.y];
-	 * 
-	 * if (selected == null) { // Not a valid piece return false; }
-	 * 
-	 * if (selected.getColor() != this.turn) { // Current Player can't move //
-	 * that piece return false; }
-	 * 
-	 * /////////////////////////////////////////////////// // Needs bounds
-	 * checking // /////////////////////////////////////////////////// Piece
-	 * targetPiece = board[targetPos.x][targetPos.y];
-	 * 
-	 * // Determines Required mobility to access position // 1 = blank space. 2
-	 * = capture int requiredMobility = 1;
-	 * 
-	 * if (targetPiece != null) { // is the target space empty? if
-	 * (targetPiece.getColor() == selected.getColor()) { // is team // mate?
-	 * return false; // can't move to where a team mate is } else {
-	 * requiredMobility = 2; // must capture that piece } }
-	 * 
-	 * // Gets piece's mobility int selectedMobility[][] =
-	 * selected.getMobility();
-	 * 
-	 * // might be able to do this a better way if
-	 * (selectedMobility[targetPos.x][targetPos.y] != requiredMobility) { return
-	 * false; // Mobilities don't match up }
-	 * 
-	 * // Target is in mobility, no must check path to reach it if ((selected
-	 * instanceof King) || (selected instanceof Knight)) { // No // path // to
-	 * // check
-	 * 
-	 * } else if (!isPathClear(board, piecePos, targetPos)) { // otherwise //
-	 * check path return false; // pieces in the way }
-	 * 
-	 * // Creates Temp Board with move executed. Piece tmpBoard[][] =
-	 * this.board; tmpBoard[piecePos.x][piecePos.y] = null;
-	 * tmpBoard[targetPos.x][targetPos.y] = selected;
-	 * 
-	 * // Turns out you don't have to check for check, just make sure the piece
-	 * // is valid
-	 * 
-	 * // if(selected.getColor() == inCheck(tmpBoard)){ // can't put yourself //
-	 * in check // return false; // }
-	 * 
-	 * // if nothing else prevents this from being a valid move, make it and //
-	 * return success
-	 * 
-	 * this.board = tmpBoard; // should be ok, assuming the creation of //
-	 * tmpBoard is ok
-	 * 
-	 * return true; }
-	 ***/
 
 	/**
 	 * Prints out the chess board. Empty spaces of the same parity are black
