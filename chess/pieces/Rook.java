@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Rook Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -60,6 +63,11 @@ public class Rook extends Piece {
 		return super.toString() + 'R';
 	}
 
+	/**
+	 * Updates rook location to the given location
+	 *
+	 * @param new rook location
+	 */
 	public void move(Point p) {
 		super.move(p);
 		if (!(hasMoved)) {

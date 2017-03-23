@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Bishop Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -59,6 +62,11 @@ public class Bishop extends Piece {
 		return mobility;
 	}
 
+	/**
+	 * Updates bishop location to the given location
+	 *
+	 * @param new bishop location
+	 */
 	public void move(Point p) {
 		super.move(p);
 	}

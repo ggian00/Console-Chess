@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * King Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -91,6 +94,11 @@ public class King extends Piece {
 		return super.toString() + 'K';
 	}
 
+	/**
+	 * Updates king location to the given location
+	 *
+	 * @param new king location
+	 */
 	public void move(Point p) {
 		super.move(p);
 		if (!(hasMoved)) {

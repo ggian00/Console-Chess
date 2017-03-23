@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Queen Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -65,7 +68,12 @@ public class Queen extends Piece {
 	public String toString() {
 		return super.toString() + 'Q';
 	}
-
+	
+	/**
+	 * Updates queen location to the given location
+	 *
+	 * @param new queen location
+	 */
 	public void move(Point p) {
 		super.move(p);
 	}

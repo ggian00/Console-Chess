@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Pawn Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -87,6 +90,11 @@ public class Pawn extends Piece {
 		return super.toString() + 'p';
 	}
 
+	/**
+	 * Updates pawn location to the given location
+	 *
+	 * @param new pawn location
+	 */
 	public void move(Point p) {
 		super.move(p);
 	}

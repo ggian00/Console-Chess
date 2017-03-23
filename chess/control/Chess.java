@@ -15,6 +15,9 @@ import pieces.Queen;
 import pieces.Rook;
 
 /**
+ * 
+ * Main Class
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -32,10 +35,7 @@ public class Chess {
 	static final boolean AUTO = false;
 
 	/**
-	 * Description...
-	 *
-	 * @param ...
-	 * @return .....
+	 * Main
 	 */
 	public static void main(String args[]) {
 		
@@ -106,6 +106,7 @@ public class Chess {
 			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
 			System.exit(0); // end match
 		} else if (input.equals("draw") && pendingDraw) {
+			System.out.println("Draw");
 			System.exit(0); // draw was waiting and is now confirmed
 		}
 		

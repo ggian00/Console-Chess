@@ -4,6 +4,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Abstract Piece Object
+ * 
 * @author      David Parsons
 * @author      Phil Plucinski
 */
@@ -45,7 +48,7 @@ public abstract class Piece {
 	/**
 	 * Updates pieces location to the given location
 	 *
-	 * @return new piece location
+	 * @param new piece location
 	 */
 	public void move(Point p) {
 		location = p;

@@ -3,6 +3,9 @@ package pieces;
 import java.awt.Point;
 
 /**
+ * 
+ * Knight Implementation of the Abstract Piece Object
+ * 
  * @author      David Parsons
  * @author      Phil Plucinski
  */
@@ -91,6 +94,11 @@ public class Knight extends Piece {
 		return super.toString() + 'N';
 	}
 
+	/**
+	 * Updates knight location to the given location
+	 *
+	 * @param new knight location
+	 */
 	public void move(Point p) {
 		super.move(p);
 	}
