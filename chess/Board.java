@@ -535,7 +535,7 @@ public class Board {
 				} else {
 					return false;
 				}
-			} else if (color == 'b' && p.location.y == 3 && board[target.x][target.y] == null) {
+			} else if (color == 'b' && origin.x != target.x && p.location.y == 3 && board[target.x][target.y] == null) {
 				if (board[target.x][3] instanceof Pawn && pawnIsEnpassant(new Pawn('w', new Point(target.x, 3)))) {
 					vBoard[origin.x][origin.y] = null;
 					vBoard[target.x][target.y] = p;

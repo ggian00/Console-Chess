@@ -28,7 +28,7 @@ public class Chess {
 	public static char promotion = 'Q';
 	
 	static Scanner scan = null;
-	static final boolean AUTO = false;
+	static final boolean AUTO = true;
 
 	/**
 	 * Description...
