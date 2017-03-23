@@ -97,7 +97,7 @@ public class King extends Piece {
 	/**
 	 * Updates king location to the given location
 	 *
-	 * @param new king location
+	 * @param p new king location
 	 */
 	public void move(Point p) {
 		super.move(p);

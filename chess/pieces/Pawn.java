@@ -11,7 +11,9 @@ import java.awt.Point;
  */
 public class Pawn extends Piece {
 
-	
+	/**
+	 * Turns since special move for enpassant
+	 */
 	public int turnsSinceSpecialMove = 0;
 
 	/**
@@ -93,16 +95,27 @@ public class Pawn extends Piece {
 	/**
 	 * Updates pawn location to the given location
 	 *
-	 * @param new pawn location
+	 * @param p new pawn location
 	 */
 	public void move(Point p) {
 		super.move(p);
 	}
 
+	/**
+	 * Creates and return a copy of the current pawn instance
+	 *
+	 * @return new pawn copy
+	 */
 	public Piece copy() {
 		return new Pawn(color, new Point(location.x, location.y));
 	}
 
+	/**
+	 * Pawn equality check.
+	 * 
+	 * @param o object to be compared to current instance
+	 * @return equality of object o and instance
+	 */
 	public boolean equals(Object o) {
 		if (o instanceof Pawn) {
 			if (((Pawn) o).location.equals(location) && ((Pawn) o).color == color) {

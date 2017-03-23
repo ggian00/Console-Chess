@@ -26,7 +26,7 @@ public abstract class Piece {
 	 * Constructor.
 	 * 
 	 * @param color piece color
-	 * @param location intial location
+	 * @param location initial location
 	 */
 	Piece(char color, Point location) {
 		this.color = color;
@@ -48,7 +48,7 @@ public abstract class Piece {
 	/**
 	 * Updates pieces location to the given location
 	 *
-	 * @param new piece location
+	 * @param p new piece location
 	 */
 	public void move(Point p) {
 		location = p;

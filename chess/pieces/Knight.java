@@ -97,7 +97,7 @@ public class Knight extends Piece {
 	/**
 	 * Updates knight location to the given location
 	 *
-	 * @param new knight location
+	 * @param p new knight location
 	 */
 	public void move(Point p) {
 		super.move(p);

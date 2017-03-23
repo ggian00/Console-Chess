@@ -23,12 +23,39 @@ import pieces.Rook;
  */
 public class Chess {
 
+	/**
+	 * Buffer read for obtaining input from user
+	 */
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	
+	/**
+	 * Board for chess match
+	 */
 	public static Board b = null;
+	
+	/**
+	 * Keeps track of any pending draws
+	 */
 	public static boolean pendingDraw = true;
+	
+	/**
+	 * origin point of move
+	 */
 	public static Point origin = null;
+	
+	/**
+	 * target point of move
+	 */
 	public static Point target = null;
+	
+	/**
+	 * end of parsed move (holds "why?")
+	 */
 	public static String end = "";
+	
+	/**
+	 * promotion if needed for current move
+	 */
 	public static char promotion = 'Q';
 	
 	static Scanner scan = null;
@@ -139,6 +166,7 @@ public class Chess {
 			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
 			System.exit(0); // end match
 		} else if (input.equals("draw") && pendingDraw) {
+			System.out.println("Draw");
 			System.exit(0); // draw was waiting and is now confirmed
 		}
 		

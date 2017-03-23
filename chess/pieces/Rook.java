@@ -12,13 +12,16 @@ import java.awt.Point;
 public class Rook extends Piece {
 
 	/**
+	 * States whether or not thing king has moved, used for special moves
+	 */
+	public boolean hasMoved = false;
+
+	/**
 	 * Constructor.
 	 * 
 	 * @param color piece color
 	 * @param location intial location
 	 */
-	public boolean hasMoved = false;
-
 	public Rook(char color, Point location) {
 		super(color, location);
 	}
@@ -66,7 +69,7 @@ public class Rook extends Piece {
 	/**
 	 * Updates rook location to the given location
 	 *
-	 * @param new rook location
+	 * @param p new rook location
 	 */
 	public void move(Point p) {
 		super.move(p);
@@ -75,6 +78,11 @@ public class Rook extends Piece {
 		}
 	}
 
+	/**
+	 * Creates and return a copy of the current rook instance
+	 *
+	 * @return new rook copy
+	 */
 	public Piece copy() {
 		return new Rook(color, new Point(location.x, location.y));
 	}

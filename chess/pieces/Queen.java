@@ -72,16 +72,16 @@ public class Queen extends Piece {
 	/**
 	 * Updates queen location to the given location
 	 *
-	 * @param new queen location
+	 * @param p new queen location
 	 */
 	public void move(Point p) {
 		super.move(p);
 	}
 	
 	/**
-	 * Creates and return a copy of the current king instance
+	 * Creates and return a copy of the current queen instance
 	 *
-	 * @return new king copy
+	 * @return new queen copy
 	 */
 	public Piece copy() {
 		return new Queen(color, new Point(location.x, location.y));

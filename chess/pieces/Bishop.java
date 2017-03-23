@@ -65,12 +65,17 @@ public class Bishop extends Piece {
 	/**
 	 * Updates bishop location to the given location
 	 *
-	 * @param new bishop location
+	 * @param p new bishop location
 	 */
 	public void move(Point p) {
 		super.move(p);
 	}
 
+	/**
+	 * Creates and return a copy of the current bishop instance
+	 *
+	 * @return new bishop copy
+	 */
 	public Piece copy() {
 		return new Bishop(color, new Point(location.x, location.y));
 	}
