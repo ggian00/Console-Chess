@@ -57,23 +57,11 @@ public class Chess {
 	 * promotion if needed for current move
 	 */
 	public static char promotion = 'Q';
-	
-	static Scanner scan = null;
-	static final boolean AUTO = false;
 
 	/**
 	 * Main
 	 */
 	public static void main(String args[]) {
-		
-		// AUTO
-		try {
-			scan = new Scanner(new File("ex1.txt"));
-		} catch (Exception e) {
-			System.out.println("Test File not found Error");
-			return;
-		}
-		// END AUTO
 		
 		System.out.println("Welcome to Chess.");
 		b = new Board();
@@ -86,15 +74,7 @@ public class Chess {
 			
 			System.out.println(b);
 			
-			// AUTO
-			if(AUTO){
-				readMoveTest();
-			} else {
-			// END AUTO
-				readMove();
-			// AUTO
-			}
-			// END AUTO
+			readMove();
 			
 
 			while (! b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion)){
@@ -128,39 +108,6 @@ public class Chess {
 			} catch (IOException e) {
 			}
 		}
-		
-		if(input.equals("resign")){
-			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
-			System.exit(0); // end match
-		} else if (input.equals("draw") && pendingDraw) {
-			System.out.println("Draw");
-			System.exit(0); // draw was waiting and is now confirmed
-		}
-		
-		String[] parts = input.split(" ");
-		
-		// (x,y)
-		origin = new Point(parts[0].charAt(0) - 'a', parts[0].charAt(1) - '1');
-		target = new Point(parts[1].charAt(0) - 'a', parts[1].charAt(1) - '1');
-		
-		promotion = 'Q';
-		end = "";
-		
-		if(parts.length > 2){
-			end = parts[parts.length - 1];
-			promotion = parts[2].charAt(0);
-		}
-		
-		pendingDraw = end.equals("draw?");
-	}
-	
-	private static void readMoveTest() {
-		String input = "";
-		
-		input = scan.nextLine();
-		System.out.println((b.getTurn() == 'w' ? "White's move: " : "Black's move: ") + input); // change tempTurn to b.getTurn()
-		
-//		System.out.println("MOVE: " + input);
 		
 		if(input.equals("resign")){
 			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change tempTurn to b.getTurn()
