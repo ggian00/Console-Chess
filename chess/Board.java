@@ -648,9 +648,13 @@ public class Board {
 
 	public boolean checkMate() {
 		if (turn == 'w' && inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
+			System.out.println(this);
+			System.out.println("Checkmate");
 			System.out.println("Black wins");
 			return true;
 		} else if (turn == 'b' && inCheck('b', board, whitePieces, blackPieces) && !existValidMoves('b')) {
+			System.out.println(this);
+			System.out.println("Checkmate");
 			System.out.println("White wins");
 			return true;
 		}
@@ -659,10 +663,13 @@ public class Board {
 
 	public boolean inStalemate() {
 		if (turn == 'w' && !inCheck('w', board, whitePieces, blackPieces) && !existValidMoves('w')) {
+			System.out.println(this);
 			System.out.println("Stalemate");
+			System.out.println("Draw");
 			return true;
 		} else if (turn == 'b' && !inCheck('b', board, whitePieces, blackPieces) && !existValidMoves('b')) {
-			System.out.println("Stalemate");
+			System.out.println(this);
+			System.out.println("Draw");
 			return true;
 		}
 		return false;
