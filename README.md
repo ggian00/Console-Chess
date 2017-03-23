@@ -6,3 +6,5 @@ Spring 2017
 Section 03
 
 David Parsons & Phil Plucinski
+
+WE DID STALEMATE :)
