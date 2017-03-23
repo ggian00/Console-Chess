@@ -480,7 +480,7 @@ public class Board {
 		// Enpassant/Pawn Special Move
 		if (p instanceof Pawn) {
 			// EP
-			if (color == 'w' && p.location.y == 4 && board[target.x][target.y] == null) {
+			if (color == 'w' && p.location.y == 4 && origin.x != target.x && board[target.x][target.y] == null) {
 				if (board[target.x][4] instanceof Pawn && pawnIsEnpassant(new Pawn('b', new Point(target.x, 4)))) {
 
 					vBoard[origin.x][origin.y] = null;
