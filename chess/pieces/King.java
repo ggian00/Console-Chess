@@ -6,12 +6,11 @@ import java.awt.Point;
  * 
  * King Implementation of the Abstract Piece Object
  * 
- * @author      David Parsons
- * @author      Phil Plucinski
+ * @author David Parsons
+ * @author Phil Plucinski
  */
 public class King extends Piece {
-	
-	
+
 	/**
 	 * States whether or not thing king has moved, used for special moves
 	 */
@@ -20,20 +19,19 @@ public class King extends Piece {
 	/**
 	 * Constructor.
 	 * 
-	 * @param color piece color
-	 * @param location intial location
+	 * @param color
+	 *            piece color
+	 * @param location
+	 *            intial location
 	 */
 	public King(char color, Point location) {
 		super(color, location);
 	}
 
 	/**
-	 * Returns a int array that representing the mobility of the piece
-	 * or positions that the piece could move
-	 * 0s, 1s, 2s, in each position
-	 * 0 - not accessible
-	 * 1 - only for move
-	 * 2 - capture (implies move)
+	 * Returns a int array that representing the mobility of the piece or
+	 * positions that the piece could move 0s, 1s, 2s, in each position 0 - not
+	 * accessible 1 - only for move 2 - capture (implies move)
 	 *
 	 * @return mobility of game piece.
 	 */
@@ -97,7 +95,8 @@ public class King extends Piece {
 	/**
 	 * Updates king location to the given location
 	 *
-	 * @param p new king location
+	 * @param p
+	 *            new king location
 	 */
 	public void move(Point p) {
 		super.move(p);
@@ -105,14 +104,16 @@ public class King extends Piece {
 			hasMoved = true;
 		}
 	}
-	
+
 	/**
 	 * Creates and return a copy of the current king instance
 	 *
 	 * @return new king copy
 	 */
 	public Piece copy() {
-		return new King(color, new Point(location.x, location.y));
+		King k = new King(color, new Point(location.x, location.y));
+		k.hasMoved = this.hasMoved;
+		return k;
 	}
 
 }

@@ -1,4 +1,5 @@
 package control;
+
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -128,8 +129,8 @@ public class Board {
 			int orientationY = ((origin.y > target.y) ? -1 : 1);
 			int currY = origin.y + orientationY;
 			while (currX != target.x && currY != target.y) {
-				if (this.board[currX][currY] != null) { // every piece between
-														// must be clear
+				if (board[currX][currY] != null) { // every piece between
+													// must be clear
 					return false;
 				}
 				currX += orientationX;
@@ -608,7 +609,11 @@ public class Board {
 				blackPieces.add(p);
 
 				return true;
+				// Check to make sure diagonal move is actually an attack.
+			} else if (p.getMobility()[target.x][target.y] == 2 && vBoard[target.x][target.y] == null) {
+				return false;
 			}
+
 		}
 
 		// All Special Cases handled.
