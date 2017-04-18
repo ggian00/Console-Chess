@@ -741,6 +741,7 @@ public class Board {
 			return true;
 		} else if (turn == 'b' && !inCheck('b', board, whitePieces, blackPieces) && !existValidMoves('b')) {
 			System.out.println(this);
+			System.out.println("Stalemate");
 			System.out.println("Draw");
 			return true;
 		}
