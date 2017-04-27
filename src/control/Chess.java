@@ -67,7 +67,7 @@ public class Chess {
 
 			readMove();
 
-			while (!b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion)) {
+			while (b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion) == null) {
 				System.out.println("Illegal move, try again");
 				readMove();
 			}

@@ -28,6 +28,11 @@ public class Board {
 
 	ArrayList<Pawn> enpassantPawns = new ArrayList<Pawn>();
 
+	Piece[][] prevBoard = new Piece[8][8];
+	ArrayList<Piece> prevWhitePieces = new ArrayList<Piece>(16);
+	ArrayList<Piece> prevBlackPieces = new ArrayList<Piece>(16);
+	ArrayList<Pawn> prevEnpassantPawns = new ArrayList<Pawn>();
+
 	private char turn = 'w';
 
 	/**
@@ -36,6 +41,14 @@ public class Board {
 	 */
 	Board() {
 		initializeBoard();
+	}
+
+	public void undo() {
+		turn = turn == 'w' ? 'b' : 'w';
+		board = prevBoard;
+		whitePieces = prevWhitePieces;
+		blackPieces = prevBlackPieces;
+		enpassantPawns = prevEnpassantPawns;
 	}
 
 	/**
@@ -249,7 +262,7 @@ public class Board {
 						ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
 
 						saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
-						if (executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ')) {
+						if (executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ') != null) {
 							return true;
 						}
 					}
@@ -313,10 +326,10 @@ public class Board {
 	 * @param promotion
 	 *            char indicating the desired promotion, if applicable; ' '
 	 *            otherwise
-	 * @return true if move is legal and has been performed; false otherwise
+	 * @return
 	 */
-	public boolean executeMove(Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces,
-			Point origin, Point target, char promotion) {
+	public Move executeMove(Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces, Point origin,
+			Point target, char promotion) {
 
 		Piece[][] vBoard = new Piece[8][8];
 		ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
@@ -324,18 +337,18 @@ public class Board {
 
 		// Check bounds of origin and target
 		if (!verifyBounds(origin, target)) {
-			return false;
+			return null;
 		}
 
 		// Check that piece exists and that it belongs to the current player
 		if (board[origin.x][origin.y] == null || board[origin.x][origin.y].getColor() != turn) {
-			return false;
+			return null;
 		}
 
 		// Check that piece is not trying to move onto a friendly piece.
 		if (board[target.x][target.y] != null
 				&& board[origin.x][origin.y].getColor() == board[target.x][target.y].getColor()) {
-			return false;
+			return null;
 		}
 
 		saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
@@ -346,7 +359,7 @@ public class Board {
 		// Check that piece is not trying to move onto another piece. (Ignore
 		// special moves)
 		if (p.getMobility()[target.x][target.y] == 1 && board[target.x][target.y] != null) {
-			return false;
+			return null;
 		}
 
 		// Checking for/performing special moves first
@@ -363,7 +376,7 @@ public class Board {
 					for (Piece q : blackPieces) {
 						for (int i = 1; i <= 3; i++) {
 							if (q.getMobility()[i][0] == 2 && isPathClear(board, q.location, new Point(i, 0))) {
-								return false;
+								return null;
 							}
 						}
 					}
@@ -376,8 +389,10 @@ public class Board {
 					rook.move(new Point(3, 0));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					whitePieces.remove(board[origin.x][origin.y]);
 					whitePieces.remove(board[0][0]);
@@ -388,10 +403,13 @@ public class Board {
 					whitePieces.add(p);
 					whitePieces.add(rook);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+
+					return m;
 
 				} else {
-					return false;
+					return null;
 				}
 			} else if (color == 'w' && origin.x == 4 && origin.y == 0 && target.x == 6 && target.y == 0) {
 				// White King-side Castle attempt detected
@@ -402,7 +420,7 @@ public class Board {
 					for (Piece q : blackPieces) {
 						for (int i = 5; i <= 6; i++) {
 							if (q.getMobility()[i][0] == 2 && isPathClear(board, q.location, new Point(i, 0))) {
-								return false;
+								return null;
 							}
 						}
 					}
@@ -415,8 +433,10 @@ public class Board {
 					rook.move(new Point(5, 0));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					whitePieces.remove(board[origin.x][origin.y]);
 					whitePieces.remove(board[7][0]);
@@ -427,9 +447,12 @@ public class Board {
 					whitePieces.add(p);
 					whitePieces.add(rook);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, new Point(7, 0), new Point(5, 0));
+
+					return m;
 				} else {
-					return false;
+					return null;
 				}
 			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 2 && target.y == 7) {
 				// Black Queen-side Castle attempt detected
@@ -441,7 +464,7 @@ public class Board {
 					for (Piece q : whitePieces) {
 						for (int i = 1; i <= 3; i++) {
 							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
-								return false;
+								return null;
 							}
 						}
 					}
@@ -454,8 +477,10 @@ public class Board {
 					rook.move(new Point(3, 7));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					blackPieces.remove(board[origin.x][origin.y]);
 					blackPieces.remove(board[0][7]);
@@ -466,9 +491,12 @@ public class Board {
 					blackPieces.add(p);
 					blackPieces.add(rook);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, new Point(0, 7), new Point(3, 7));
+
+					return m;
 				} else {
-					return false;
+					return null;
 				}
 			} else if (color == 'b' && origin.x == 4 && origin.y == 7 && target.x == 6 && target.y == 7) {
 				// Black King-side Castle attempt detected
@@ -479,7 +507,7 @@ public class Board {
 					for (Piece q : whitePieces) {
 						for (int i = 5; i <= 6; i++) {
 							if (q.getMobility()[i][7] == 2 && isPathClear(board, q.location, new Point(i, 7))) {
-								return false;
+								return null;
 							}
 						}
 					}
@@ -492,8 +520,10 @@ public class Board {
 					rook.move(new Point(5, 7));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					blackPieces.remove(board[origin.x][origin.y]);
 					blackPieces.remove(board[7][7]);
@@ -504,9 +534,12 @@ public class Board {
 					blackPieces.add(p);
 					blackPieces.add(rook);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, new Point(7, 7), new Point(5, 7));
+
+					return m;
 				} else {
-					return false;
+					return null;
 				}
 			}
 		}
@@ -524,8 +557,10 @@ public class Board {
 					p.move(new Point(target.x, target.y));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					blackPieces.remove(board[target.x][4]);
 					whitePieces.remove(board[origin.x][origin.y]);
@@ -534,9 +569,12 @@ public class Board {
 					board[target.x][target.y] = p;
 					whitePieces.add(p);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, null, null);
+
+					return m;
 				} else {
-					return false;
+					return null;
 				}
 			} else if (color == 'b' && origin.x != target.x && p.location.y == 3 && board[target.x][target.y] == null) {
 				if (board[target.x][3] instanceof Pawn && pawnIsEnpassant(new Pawn('w', new Point(target.x, 3)))) {
@@ -545,8 +583,10 @@ public class Board {
 					p.move(new Point(target.x, target.y));
 
 					if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-						return false;
+						return null;
 					}
+
+					savePrevious();
 
 					whitePieces.remove(board[target.x][3]);
 					blackPieces.remove(board[origin.x][origin.y]);
@@ -555,9 +595,12 @@ public class Board {
 					board[target.x][target.y] = p;
 					blackPieces.add(p);
 
-					return true;
+					Move m = new Move();
+					m.setMove(origin, target, null, null);
+
+					return m;
 				} else {
-					return false;
+					return null;
 				}
 				// Special Move
 			} else if (Math.abs(origin.y - target.y) == 2) {
@@ -565,7 +608,7 @@ public class Board {
 						|| (color == 'b' && origin.y == 6) && isPathClear(board, origin, target)) {
 					enpassantPawns.add((Pawn) p);
 				} else {
-					return false;
+					return null;
 				}
 				// Promotion
 			} else if (color == 'w' && target.y == 7) {
@@ -579,15 +622,21 @@ public class Board {
 				p.move(new Point(target.x, target.y));
 
 				if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-					return false;
+					return null;
 				}
+
+				savePrevious();
 
 				whitePieces.remove(board[origin.x][origin.y]);
 				board[origin.x][origin.y] = null;
 				board[target.x][target.y] = p;
 				whitePieces.add(p);
 
-				return true;
+				Move m = new Move();
+				m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+				m.promotionType = promotion;
+
+				return m;
 
 			} else if (color == 'b' && target.y == 0) {
 				Piece temp = p;
@@ -600,18 +649,24 @@ public class Board {
 				p.move(new Point(target.x, target.y));
 
 				if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
-					return false;
+					return null;
 				}
+
+				savePrevious();
 
 				blackPieces.remove(board[origin.x][origin.y]);
 				board[origin.x][origin.y] = null;
 				board[target.x][target.y] = p;
 				blackPieces.add(p);
 
-				return true;
+				Move m = new Move();
+				m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+				m.promotionType = promotion;
+
+				return m;
 				// Check to make sure diagonal move is actually an attack.
 			} else if (p.getMobility()[target.x][target.y] == 2 && vBoard[target.x][target.y] == null) {
-				return false;
+				return null;
 			}
 
 		}
@@ -620,12 +675,12 @@ public class Board {
 
 		// Piece must be allowed to move to target.
 		if (p.getMobility()[target.x][target.y] == 0) {
-			return false;
+			return null;
 		}
 
 		// Path must be clear.
 		if (!isPathClear(board, origin, target)) {
-			return false;
+			return null;
 		}
 
 		vBoard[origin.x][origin.y] = null;
@@ -636,7 +691,7 @@ public class Board {
 			if (p instanceof Pawn && enpassantPawns.contains((Pawn) p)) {
 				enpassantPawns.remove((Pawn) p);
 			}
-			return false;
+			return null;
 		}
 
 		if (board[target.x][target.y] != null) {
@@ -648,7 +703,15 @@ public class Board {
 		board[origin.x][origin.y] = null;
 		board[target.x][target.y] = p;
 
-		return true;
+		Move m = new Move();
+		m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+
+		// EnPassant pawn was added that did not exist in previous state.
+		if (p instanceof Pawn && Math.abs(origin.y - target.y) == 2) {
+			prevEnpassantPawns.remove(enpassantPawns.size() - 1);
+		}
+
+		return m;
 	}
 
 	/**
@@ -679,6 +742,18 @@ public class Board {
 			break;
 		}
 		return promotedPiece;
+	}
+
+	private void savePrevious() {
+		prevBoard = new Piece[8][8];
+		prevWhitePieces = new ArrayList<Piece>(16);
+		prevBlackPieces = new ArrayList<Piece>(16);
+		prevEnpassantPawns = new ArrayList<Pawn>();
+
+		saveStateToVirtualStorage(prevBoard, prevWhitePieces, prevBlackPieces);
+		for (Pawn p : enpassantPawns) {
+			prevEnpassantPawns.add(p);
+		}
 	}
 
 	/**
