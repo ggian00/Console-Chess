@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Match {
-	private Board engineBoard;
+	Board engineBoard;
 	private String[][] displayBoard = new String[8][8];
-	private String[][] prevBoard = null;
 	private List<Move> moves = new ArrayList<Move>();
 	private String title;
+	private Boolean ongoing = true;
+	private int currentMoveIndex = -1;
 
 	public Match() {
 		engineBoard = new Board();
@@ -24,7 +25,6 @@ public class Match {
 			return null;
 		}
 
-		prevBoard = copyDisplayBoard();
 		engineBoard.toggleTurn();
 
 		if (engineBoard.inCheck(engineBoard.getTurn(), engineBoard.board, engineBoard.whitePieces,
@@ -32,20 +32,66 @@ public class Match {
 			move.check = engineBoard.getTurn();
 		}
 
+		if (!engineBoard.matchCanContinue()) {
+			ongoing = false;
+		}
+
+		move.updateDisplayBoard(displayBoard);
+		displayBoard = move.displayBoard;
 		moves.add(move);
-		executeMoveOnDisplayBoard(move);
+		currentMoveIndex++;
+
+		System.out.println(move.toString());
 
 		return move;
 	}
 
 	public Boolean undo() {
-		if (prevBoard == null) {
+		if (moves.isEmpty()) {
 			return false;
 		}
 		engineBoard.undo();
-		displayBoard = prevBoard;
+		displayBoard = moves.get(--currentMoveIndex).displayBoard;
 		moves.remove(moves.size() - 1);
 		return true;
+	}
+
+	public String[][] getCurrentDisplayBoard() {
+		return displayBoard;
+	}
+
+	public void setToZerothMove() {
+		populateDisplayBoard();
+		currentMoveIndex = -1;
+	}
+
+	public Move getNextMove() {
+		if (currentMoveIndex >= moves.size() - 1) {
+			return null;
+		}
+		displayBoard = moves.get(++currentMoveIndex).displayBoard;
+		return moves.get(currentMoveIndex);
+	}
+
+	public Move getPrevMove() {
+		if (currentMoveIndex < 0) {
+			return null;
+		}
+		if (currentMoveIndex == 0) {
+			setToZerothMove();
+			return null;
+		}
+		displayBoard = moves.get(--currentMoveIndex).displayBoard;
+		return moves.get(currentMoveIndex);
+	}
+
+	public Move getLastMove() {
+		if (moves.isEmpty()) {
+			return null;
+		}
+		displayBoard = moves.get(moves.size() - 1).displayBoard;
+		currentMoveIndex = moves.size() - 1;
+		return moves.get(moves.size() - 1);
 	}
 
 	public String getTitle() {
@@ -56,35 +102,13 @@ public class Match {
 		this.title = title;
 	}
 
-	private void executeMoveOnDisplayBoard(Move m) {
-		String firstPiece = displayBoard[(int) m.firstPieceOrigin.getX()][(int) m.firstPieceOrigin.getY()];
-		if (m.isPromotion()) {
-			String color = firstPiece.substring(0, 1);
-			displayBoard[(int) m.firstPieceTarget.getX()][(int) m.firstPieceTarget.getY()] = color + m.promotionType;
-		} else {
-			displayBoard[(int) m.firstPieceTarget.getX()][(int) m.firstPieceTarget.getY()] = firstPiece;
-		}
-		if (m.secondPieceOrigin != null) {
-			displayBoard[(int) m.secondPieceTarget.getX()][(int) m.secondPieceTarget
-					.getY()] = displayBoard[(int) m.firstPieceOrigin.getX()][(int) m.firstPieceOrigin.getY()];
-			displayBoard[(int) m.secondPieceOrigin.getX()][(int) m.secondPieceOrigin.getY()] = "";
-		}
-	}
-
-	private String[][] copyDisplayBoard() {
-
-		String[][] copyBoard = new String[8][8];
-
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				copyBoard[i][j] = displayBoard[i][j];
-			}
-		}
-
-		return copyBoard;
+	public Boolean isOngoing() {
+		return ongoing;
 	}
 
 	private void populateDisplayBoard() {
+
+		displayBoard = new String[8][8];
 
 		displayBoard[0][7] = "bR";
 		displayBoard[1][7] = "bN";
@@ -109,5 +133,12 @@ public class Match {
 		displayBoard[6][0] = "wN";
 		displayBoard[7][0] = "wR";
 
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (displayBoard[i][j] == null) {
+					displayBoard[i][j] = "";
+				}
+			}
+		}
 	}
 }

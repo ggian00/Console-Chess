@@ -633,7 +633,7 @@ public class Board {
 				whitePieces.add(p);
 
 				Move m = new Move();
-				m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+				m.setMove(origin, target, null, null);
 				m.promotionType = promotion;
 
 				return m;
@@ -660,7 +660,7 @@ public class Board {
 				blackPieces.add(p);
 
 				Move m = new Move();
-				m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+				m.setMove(origin, target, null, null);
 				m.promotionType = promotion;
 
 				return m;
@@ -694,6 +694,8 @@ public class Board {
 			return null;
 		}
 
+		savePrevious();
+
 		if (board[target.x][target.y] != null) {
 			(color == 'b' ? whitePieces : blackPieces).remove(board[target.x][target.y]);
 		}
@@ -704,7 +706,7 @@ public class Board {
 		board[target.x][target.y] = p;
 
 		Move m = new Move();
-		m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+		m.setMove(origin, target, null, null);
 
 		// EnPassant pawn was added that did not exist in previous state.
 		if (p instanceof Pawn && Math.abs(origin.y - target.y) == 2) {

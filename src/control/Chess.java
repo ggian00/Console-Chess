@@ -22,7 +22,7 @@ public class Chess {
 	/**
 	 * Board for chess match
 	 */
-	public static Board b = null;
+	public static Match m = null;
 
 	/**
 	 * Keeps track of any pending draws
@@ -55,27 +55,76 @@ public class Chess {
 	public static void main(String args[]) {
 
 		System.out.println("Welcome to Chess.");
-		b = new Board();
+		m = new Match();
 
 		do {
 
-			if (b.inCheck(b.getTurn(), b.board, b.whitePieces, b.blackPieces)) {
-				System.out.println("Check");
-			}
+			printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+
+			Board b = m.engineBoard;
 
 			System.out.println(b);
 
 			readMove();
 
-			while (b.executeMove(b.board, b.whitePieces, b.blackPieces, origin, target, promotion) == null) {
+			while ((m.executeMove(origin, target, promotion)) == null) {
 				System.out.println("Illegal move, try again");
 				readMove();
 			}
 
-			b.toggleTurn();
+		} while (m.isOngoing());
 
-		} while (b.matchCanContinue());
+		String input = "";
+		m.setToZerothMove();
 
+		while (!input.equals("5")) {
+			System.out.println("1. First");
+			System.out.println("2. Prev");
+			System.out.println("3. Next");
+			System.out.println("4. Last");
+			System.out.println("5. Quit");
+			try {
+				input = reader.readLine();
+			} catch (IOException e) {
+				continue;
+			}
+			Move move = null;
+			if (input.equals("1")) {
+				m.setToZerothMove();
+				printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+				System.out.println();
+				continue;
+			} else if (input.equals("2")) {
+				move = m.getPrevMove();
+			} else if (input.equals("3")) {
+				move = m.getNextMove();
+			} else if (input.equals("4")) {
+				move = m.getLastMove();
+			}
+
+			if (move == null) {
+				System.out.println("Null move");
+				if (input.equals("2")) {
+					printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+					System.out.println();
+				}
+			} else {
+				System.out.println(move.toString());
+				printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+				System.out.println();
+			}
+
+		}
+	}
+
+	private static void printPiecesFromDisplayBoard(String[][] board) {
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (!board[j][i].equals("")) {
+					System.out.println(board[j][i] + " @ " + (char) ('a' + j) + (char) ('0' + i + 1));
+				}
+			}
+		}
 	}
 
 	/**
@@ -86,10 +135,10 @@ public class Chess {
 	private static void readMove() {
 		String input = "";
 
-		System.out.print((b.getTurn() == 'w' ? "White's move: " : "Black's move: ")); // change
-																						// tempTurn
-																						// to
-																						// b.getTurn()
+		System.out.print((m.engineBoard.getTurn() == 'w' ? "White's move: " : "Black's move: ")); // change
+		// tempTurn
+		// to
+		// b.getTurn()
 
 		while (true) {
 			try {
@@ -100,10 +149,10 @@ public class Chess {
 		}
 
 		if (input.equals("resign")) {
-			System.out.println((b.getTurn() == 'w' ? "Black wins" : "White wins")); // change
-																					// tempTurn
-																					// to
-																					// b.getTurn()
+			System.out.println((m.engineBoard.getTurn() == 'w' ? "Black wins" : "White wins")); // change
+			// tempTurn
+			// to
+			// b.getTurn()
 			System.exit(0); // end match
 		} else if (input.equals("draw") && pendingDraw) {
 			System.out.println("Draw");
