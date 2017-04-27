@@ -49,6 +49,10 @@ public class Chess {
 	 */
 	public static char promotion = 'Q';
 
+	private static Boolean undo = false;
+
+	private static Boolean AI = false;
+
 	/**
 	 * Main
 	 */
@@ -66,6 +70,16 @@ public class Chess {
 			System.out.println(b);
 
 			readMove();
+
+			if (undo) {
+				m.undo();
+				undo = false;
+				continue;
+			} else if (AI) {
+				m.makeAIMove();
+				AI = false;
+				continue;
+			}
 
 			while ((m.executeMove(origin, target, promotion)) == null) {
 				System.out.println("Illegal move, try again");
@@ -146,6 +160,14 @@ public class Chess {
 				break;
 			} catch (IOException e) {
 			}
+		}
+
+		if (input.equalsIgnoreCase("undo")) {
+			undo = true;
+			return;
+		} else if (input.equalsIgnoreCase("AI")) {
+			AI = true;
+			return;
 		}
 
 		if (input.equals("resign")) {

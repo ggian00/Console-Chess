@@ -272,6 +272,28 @@ public class Board {
 		return false;
 	}
 
+	ArrayList<Point> getValidMoves(Piece p) {
+		ArrayList<Point> validMoves = new ArrayList<Point>();
+
+		int[][] mobility = p.getMobility();
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				if (mobility[x][y] != 0 && isPathClear(board, p.location, new Point(x, y))) {
+					// Check if said move will cause check.
+					Piece[][] vBoard = new Piece[8][8];
+					ArrayList<Piece> vWhitePieces = new ArrayList<Piece>(16);
+					ArrayList<Piece> vBlackPieces = new ArrayList<Piece>(16);
+
+					saveStateToVirtualStorage(vBoard, vWhitePieces, vBlackPieces);
+					if (executeMove(vBoard, vWhitePieces, vBlackPieces, p.location, new Point(x, y), ' ') != null) {
+						validMoves.add(new Point(x, y));
+					}
+				}
+			}
+		}
+		return validMoves;
+	}
+
 	/**
 	 * Checks to see if the argument Pawn is contained in the list of
 	 * enpassant-eligible pawns.
@@ -326,7 +348,8 @@ public class Board {
 	 * @param promotion
 	 *            char indicating the desired promotion, if applicable; ' '
 	 *            otherwise
-	 * @return
+	 * @return Move representation of the executed move. Null if move was
+	 *         invalid.
 	 */
 	public Move executeMove(Piece[][] board, ArrayList<Piece> whitePieces, ArrayList<Piece> blackPieces, Point origin,
 			Point target, char promotion) {
@@ -392,7 +415,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					whitePieces.remove(board[origin.x][origin.y]);
 					whitePieces.remove(board[0][0]);
@@ -436,7 +461,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					whitePieces.remove(board[origin.x][origin.y]);
 					whitePieces.remove(board[7][0]);
@@ -480,7 +507,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					blackPieces.remove(board[origin.x][origin.y]);
 					blackPieces.remove(board[0][7]);
@@ -523,7 +552,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					blackPieces.remove(board[origin.x][origin.y]);
 					blackPieces.remove(board[7][7]);
@@ -560,7 +591,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					blackPieces.remove(board[target.x][4]);
 					whitePieces.remove(board[origin.x][origin.y]);
@@ -586,7 +619,9 @@ public class Board {
 						return null;
 					}
 
-					savePrevious();
+					if (board == this.board) {
+						savePrevious();
+					}
 
 					whitePieces.remove(board[target.x][3]);
 					blackPieces.remove(board[origin.x][origin.y]);
@@ -619,13 +654,16 @@ public class Board {
 
 				vBoard[origin.x][origin.y] = null;
 				vBoard[target.x][target.y] = p;
+				/** Null pointer **/
 				p.move(new Point(target.x, target.y));
 
 				if (inCheck(color, vBoard, vWhitePieces, vBlackPieces)) {
 					return null;
 				}
 
-				savePrevious();
+				if (board == this.board) {
+					savePrevious();
+				}
 
 				whitePieces.remove(board[origin.x][origin.y]);
 				board[origin.x][origin.y] = null;
@@ -634,7 +672,7 @@ public class Board {
 
 				Move m = new Move();
 				m.setMove(origin, target, null, null);
-				m.promotionType = promotion;
+				m.promotionType = Character.toLowerCase(promotion);
 
 				return m;
 
@@ -652,7 +690,9 @@ public class Board {
 					return null;
 				}
 
-				savePrevious();
+				if (board == this.board) {
+					savePrevious();
+				}
 
 				blackPieces.remove(board[origin.x][origin.y]);
 				board[origin.x][origin.y] = null;
@@ -661,7 +701,7 @@ public class Board {
 
 				Move m = new Move();
 				m.setMove(origin, target, null, null);
-				m.promotionType = promotion;
+				m.promotionType = Character.toLowerCase(promotion);
 
 				return m;
 				// Check to make sure diagonal move is actually an attack.
@@ -694,7 +734,9 @@ public class Board {
 			return null;
 		}
 
-		savePrevious();
+		if (board == this.board) {
+			savePrevious();
+		}
 
 		if (board[target.x][target.y] != null) {
 			(color == 'b' ? whitePieces : blackPieces).remove(board[target.x][target.y]);
@@ -709,7 +751,7 @@ public class Board {
 		m.setMove(origin, target, null, null);
 
 		// EnPassant pawn was added that did not exist in previous state.
-		if (p instanceof Pawn && Math.abs(origin.y - target.y) == 2) {
+		if (board == this.board && p instanceof Pawn && Math.abs(origin.y - target.y) == 2) {
 			prevEnpassantPawns.remove(enpassantPawns.size() - 1);
 		}
 
@@ -742,10 +784,17 @@ public class Board {
 		case 'B':
 			promotedPiece = new Bishop(pawn.getColor(), pawn.location);
 			break;
+		default:
+			promotedPiece = new Queen(pawn.getColor(), pawn.location);
+			break;
 		}
 		return promotedPiece;
 	}
 
+	/**
+	 * Saves the current state of the board over to placeholders for a previous
+	 * state.
+	 */
 	private void savePrevious() {
 		prevBoard = new Piece[8][8];
 		prevWhitePieces = new ArrayList<Piece>(16);

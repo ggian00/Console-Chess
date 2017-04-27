@@ -2,6 +2,14 @@ package control;
 
 import java.awt.Point;
 
+/**
+ * This class represents a Move in chess. Each move can physically move up to
+ * two chess pieces of the performing player's pieces. The displayBoard
+ * represents the board after the move has been performed on the chess board.
+ * 
+ * @author Phil
+ *
+ */
 public class Move {
 
 	Point firstPieceOrigin;
@@ -10,11 +18,26 @@ public class Move {
 	Point secondPieceTarget = null;
 	char promotionType = '\0';
 	char check = '\0';
-	String[][] displayBoard;
+	String[][] displayBoard = null;
 
+	/**
+	 * No-arg constructor.
+	 */
 	Move() {
 	}
 
+	/**
+	 * Initializes the move based on arguments.
+	 * 
+	 * @param firstOrigin
+	 *            Point
+	 * @param firstTarget
+	 *            Point
+	 * @param secondOrigin
+	 *            Point
+	 * @param secondTarget
+	 *            Point
+	 */
 	void setMove(Point firstOrigin, Point firstTarget, Point secondOrigin, Point secondTarget) {
 
 		this.firstPieceOrigin = firstOrigin;
@@ -25,50 +48,92 @@ public class Move {
 		this.check = '\0';
 	}
 
+	/**
+	 * @return Point representation of the first piece's origin.
+	 */
 	public Point getFirstPieceOrigin() {
 		return firstPieceOrigin;
 	}
 
+	/**
+	 * @return Point representation of the first piece's target.
+	 */
 	public Point getFirstPieceTarget() {
 		return firstPieceTarget;
 	}
 
+	/**
+	 * @return Point representation of the second piece's origin.
+	 */
 	public Point getSecondPieceOrigin() {
 		return secondPieceOrigin;
 	}
 
+	/**
+	 * @return Point representation of the sceond piece's target.
+	 */
 	public Point getSecondPieceTarget() {
 		return secondPieceTarget;
 	}
 
+	/**
+	 * @return Boolean of value true if the move is a promotion. False
+	 *         otherwise.
+	 */
 	public boolean isPromotion() {
 		return promotionType != '\0';
 	}
 
+	/**
+	 * @return Boolean of value true if the move caused check. False otherwise.
+	 */
 	public boolean isCheck() {
 		return check == '\0';
 	}
 
+	/**
+	 * @return char Type of promotion (Q,K,B,N)
+	 */
 	public char getPromotion() {
 		return promotionType;
 	}
 
+	/**
+	 * @return char 'w' if white is in check. 'b' if black is in check. '\0'
+	 *         otherwise
+	 */
 	public char getCheck() {
 		return check;
 	}
 
+	/**
+	 * Updates the display board by executing the move on the previous display
+	 * board.
+	 * 
+	 * @param prevBoard
+	 *            Board in a state prior to the execution of the move.
+	 */
 	void updateDisplayBoard(String[][] prevBoard) {
 		if (displayBoard != null) {
+			// displayBoard was already initialized. Should not act again.
 			return;
 		}
 		displayBoard = copyDisplayBoard(prevBoard);
 		executeMoveOnDisplayBoard();
 	}
 
+	/**
+	 * @return String[][] representation of the board.
+	 */
 	public String[][] getDisplayBoard() {
 		return displayBoard;
 	}
 
+	/**
+	 * @param board
+	 *            String[][] representation of the board to be copied.
+	 * @return a copy of the String[][] representation of the argument board.
+	 */
 	private String[][] copyDisplayBoard(String[][] board) {
 
 		String[][] copyBoard = new String[8][8];
@@ -82,6 +147,10 @@ public class Move {
 		return copyBoard;
 	}
 
+	/**
+	 * Copies over string representation in displayBoard based on piece 1 and 2
+	 * origin to piece 1 and 2 destinations. Applies promotion if necessary.
+	 */
 	private void executeMoveOnDisplayBoard() {
 		String firstPiece = displayBoard[(int) firstPieceOrigin.getX()][(int) firstPieceOrigin.getY()];
 		if (isPromotion()) {
@@ -98,6 +167,11 @@ public class Move {
 		}
 	}
 
+	/**
+	 * 
+	 * @return string representation of Move. Ex. "Piece 1: a7 to a8\nPromotion:
+	 *         Q\nPiece 3: N/A"
+	 */
 	public String toString() {
 		return "Piece 1: " + firstPieceOrigin.toString() + " to " + firstPieceTarget.toString() + "\nPromotion: "
 				+ (promotionType == '\0' ? "N/A" : promotionType) + "\nPiece 2: "
