@@ -227,7 +227,7 @@ public class Match {
 	private Point getPointFromString(String p) {
 		p = p.toLowerCase();
 		int y = p.charAt(0) - '1';
-		int x = p.charAt(1) - 'b';
+		int x = p.charAt(1) - 'a';
 		return new Point(x, y);
 	}
 }

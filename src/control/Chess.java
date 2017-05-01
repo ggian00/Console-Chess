@@ -31,12 +31,12 @@ public class Chess {
 	/**
 	 * origin point of move
 	 */
-	public static Point origin = null;
+	public static String origin = null;
 
 	/**
 	 * target point of move
 	 */
-	public static Point target = null;
+	public static String target = null;
 
 	/**
 	 * end of parsed move (holds "why?")
@@ -80,12 +80,7 @@ public class Chess {
 				continue;
 			}
 
-			String strOrigin = Character.toString((char) ('0' + origin.y))
-					+ Character.toString((char) ('a' + origin.x));
-			String strTarget = Character.toString((char) ('0' + target.y))
-					+ Character.toString((char) ('a' + target.x));
-
-			while ((m.executeMove(strOrigin, strTarget, false, promotion)) == null) {
+			while ((m.executeMove(origin, target, false, promotion)) == null) {
 				System.out.println("Illegal move, try again");
 				readMove();
 			}
@@ -169,8 +164,8 @@ public class Chess {
 		String[] parts = input.split(" ");
 
 		// (x,y)
-		origin = new Point(parts[0].charAt(0) - 'a', parts[0].charAt(1) - '1');
-		target = new Point(parts[1].charAt(0) - 'a', parts[1].charAt(1) - '1');
+		origin = parts[0];
+		target = parts[1];
 
 		promotion = 'Q';
 		end = "";
