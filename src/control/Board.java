@@ -271,7 +271,7 @@ public class Board {
 		return false;
 	}
 
-	ArrayList<Point> getValidMoves(Piece p) {
+	public ArrayList<Point> getValidMoves(Piece p) {
 		ArrayList<Point> validMoves = new ArrayList<Point>();
 
 		int[][] mobility = p.getMobility();
