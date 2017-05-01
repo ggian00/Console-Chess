@@ -48,7 +48,7 @@ public class Move {
 		this.secondPieceTarget = secondTarget;
 		this.promotionType = '\0';
 		this.check = '\0';
-		this.turn = turn;
+		this.turn = (turn == 'w' ? 'b' : 'w');
 	}
 
 	/**
