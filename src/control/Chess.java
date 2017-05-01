@@ -81,12 +81,12 @@ public class Chess {
 				continue;
 			}
 
-			while ((m.executeMove(origin, target, promotion)) == null) {
+			while ((m.executeMove(origin, target, false, promotion)) == null) {
 				System.out.println("Illegal move, try again");
 				readMove();
 			}
 
-		} while (m.isOngoing());
+		} while (m.engineBoard.matchCanContinue());
 
 		String input = "";
 		m.setToZerothMove();

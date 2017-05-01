@@ -1,6 +1,7 @@
 package control;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 /**
  * This class represents a Move in chess. Each move can physically move up to
@@ -12,13 +13,15 @@ import java.awt.Point;
  */
 public class Move {
 
-	Point firstPieceOrigin;
-	Point firstPieceTarget;
+	Point firstPieceOrigin = null;
+	Point firstPieceTarget = null;
 	Point secondPieceOrigin = null;
 	Point secondPieceTarget = null;
 	char promotionType = '\0';
 	char check = '\0';
 	String[][] displayBoard = null;
+	Boolean pendingDraw = false;
+	char turn = 'w';
 
 	/**
 	 * No-arg constructor.
@@ -38,7 +41,7 @@ public class Move {
 	 * @param secondTarget
 	 *            Point
 	 */
-	void setMove(Point firstOrigin, Point firstTarget, Point secondOrigin, Point secondTarget) {
+	void setMove(Point firstOrigin, Point firstTarget, Point secondOrigin, Point secondTarget, char turn) {
 
 		this.firstPieceOrigin = firstOrigin;
 		this.firstPieceTarget = firstTarget;
@@ -46,6 +49,7 @@ public class Move {
 		this.secondPieceTarget = secondTarget;
 		this.promotionType = '\0';
 		this.check = '\0';
+		this.turn = turn;
 	}
 
 	/**
@@ -125,8 +129,29 @@ public class Move {
 	/**
 	 * @return String[][] representation of the board.
 	 */
-	public String[][] getDisplayBoard() {
+	public String[][] getPieces() {
 		return displayBoard;
+	}
+
+	public Boolean hasPendingDraw() {
+		return pendingDraw;
+	}
+
+	public ArrayList<String> getPossiblePromoteSpaces() {
+		ArrayList<String> promotables = new ArrayList<String>();
+		for (int i = 0; i < 8; i++) {
+			if (displayBoard[i][6].equals("wp")) {
+				promotables.add("6" + ('a' + i));
+			}
+			if (displayBoard[i][1].equals("bp")) {
+				promotables.add("1" + ('a' + i));
+			}
+		}
+		return null;
+	}
+
+	public char getTurn() {
+		return turn;
 	}
 
 	/**

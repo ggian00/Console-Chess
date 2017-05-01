@@ -3,6 +3,7 @@ package control;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -22,8 +23,8 @@ public class Match {
 	private String[][] displayBoard = new String[8][8];
 	private List<Move> moves = new ArrayList<Move>();
 	private String title;
-	private Boolean ongoing = true;
 	private int currentMoveIndex = -1;
+	private String endStatus;
 
 	/**
 	 * No-arg constructor that simply initializes various variables in the
@@ -32,6 +33,57 @@ public class Match {
 	public Match() {
 		engineBoard = new Board();
 		populateDisplayBoard();
+	}
+
+	public void endMatch() {
+		Engine.saveMatch();
+	}
+
+	/**
+	 * Performs a move randomly selected from the set of valid moves for the
+	 * current player.
+	 * 
+	 * @return Move representation of the performed move
+	 */
+	public Move makeAIMove() {
+		char turn = engineBoard.getTurn();
+		Move move = null;
+		do {
+			ArrayList<Piece> pieces = (turn == 'w') ? engineBoard.whitePieces : engineBoard.blackPieces;
+			int pieceNo = new Random().nextInt(pieces.size());
+			ArrayList<Point> moves = engineBoard.getValidMoves(pieces.get(pieceNo));
+			Collections.shuffle(moves);
+			for (Point point : moves) {
+				Point pOrigin = pieces.get(pieceNo).location;
+				String origin = String.valueOf(pOrigin.getX()) + String.valueOf('a' + pOrigin.getY());
+				String target = String.valueOf(point.getX()) + String.valueOf('a' + point.getY());
+				move = executeMove(origin, target, false, 'Q');
+				if (move != null) {
+					break;
+				}
+			}
+		} while (move == null);
+
+		return move;
+	}
+
+	/**
+	 * Reverses the last move in both the engine and display boards.
+	 * 
+	 * @return true if successful, false otherwise
+	 */
+	public Move undo() {
+		if (moves.isEmpty()) {
+			return null;
+		}
+		engineBoard.undo();
+		if (currentMoveIndex == 0) {
+			populateDisplayBoard();
+		} else {
+			displayBoard = moves.get(--currentMoveIndex).displayBoard;
+		}
+		moves.remove(moves.size() - 1);
+		return moves.get(currentMoveIndex);
 	}
 
 	/**
@@ -46,15 +98,14 @@ public class Match {
 	 *            char indicating the desired promotion, if applicable
 	 * @return
 	 */
-	public Move executeMove(Point origin, Point target, char promotion) {
-		if (!ongoing) {
-			return null;
-		}
+	public Move executeMove(String o, String t, Boolean draw, char promotion) {
+		Point origin = getPointFromString(o);
+		Point target = getPointFromString(t);
 		Move move = engineBoard.executeMove(engineBoard.board, engineBoard.whitePieces, engineBoard.blackPieces, origin,
 				target, promotion);
 
 		if (move == null) {
-			return null;
+			return moves.get(currentMoveIndex);
 		}
 
 		engineBoard.toggleTurn();
@@ -64,10 +115,6 @@ public class Match {
 			move.check = engineBoard.getTurn();
 		}
 
-		if (!engineBoard.matchCanContinue()) {
-			ongoing = false;
-		}
-
 		move.updateDisplayBoard(displayBoard);
 		displayBoard = move.displayBoard;
 		moves.add(move);
@@ -75,55 +122,27 @@ public class Match {
 
 		System.out.println(move.toString());
 
-		return move;
-	}
+		move.pendingDraw = draw;
 
-	/**
-	 * Reverses the last move in both the engine and display boards.
-	 * 
-	 * @return true if successful, false otherwise
-	 */
-	public Boolean undo() {
-		if (moves.isEmpty()) {
-			return false;
-		}
-		engineBoard.undo();
-		if (currentMoveIndex == 0) {
-			populateDisplayBoard();
-		} else {
-			displayBoard = moves.get(--currentMoveIndex).displayBoard;
-		}
-		moves.remove(moves.size() - 1);
-		return true;
-	}
-
-	/**
-	 * Performs a move randomly selected from the set of valid moves for the
-	 * current player.
-	 * 
-	 * @return Move representation of the performed move
-	 */
-	public Move makeAIMove() {
-		if (!ongoing) {
-			return null;
-		}
-		char turn = engineBoard.getTurn();
-		Move move = null;
-		do {
-			ArrayList<Piece> pieces = (turn == 'w') ? engineBoard.whitePieces : engineBoard.blackPieces;
-			int pieceNo = new Random().nextInt(pieces.size());
-			ArrayList<Point> moves = engineBoard.getValidMoves(pieces.get(pieceNo));
-			Collections.shuffle(moves);
-			for (Point point : moves) {
-				move = executeMove(pieces.get(pieceNo).location, point, 'Q');
-				if (move != null) {
-					break;
-				}
+		if (!isOngoing()) {
+			if (engineBoard.inStalemate()) {
+				endStatus = "Stalemate on " + ((engineBoard.getTurn() == 'w') ? "white" : "black") + "to move.";
+			} else if (engineBoard.checkMate()) {
+				endStatus = "Checkmate. " + ((engineBoard.getTurn() == 'w') ? "Black" : "White") + " wins!";
 			}
-		} while (move == null);
+		}
 
 		return move;
+	}
 
+	public String resignation() {
+		endStatus = (engineBoard.getTurn() == 'w' ? "White" : "Black") + " resigns.";
+		return endStatus;
+	}
+
+	public String acceptDraw() {
+		endStatus = "Match is a draw";
+		return endStatus;
 	}
 
 	/**
@@ -137,73 +156,6 @@ public class Match {
 	 */
 	public String[][] getCurrentDisplayBoard() {
 		return displayBoard;
-	}
-
-	/**
-	 * Sets the display board to the initial setup, to reflect move 'zero'.
-	 */
-	public void setToZerothMove() {
-		if (ongoing) {
-			return;
-		}
-		populateDisplayBoard();
-		currentMoveIndex = -1;
-	}
-
-	/**
-	 * Returns the next Move in the match and sets the displayBoard to the
-	 * displayBoard of that move.
-	 * 
-	 * @return Next Move
-	 */
-	public Move getNextMove() {
-		if (ongoing) {
-			return null;
-		}
-		if (currentMoveIndex >= moves.size() - 1) {
-			return null;
-		}
-		displayBoard = moves.get(++currentMoveIndex).displayBoard;
-		return moves.get(currentMoveIndex);
-	}
-
-	/**
-	 * Returns the previous Move in the match and sets the displayBoard to the
-	 * displayBoard of that move.
-	 * 
-	 * @return Previous Move
-	 */
-	public Move getPrevMove() {
-		if (ongoing) {
-			return null;
-		}
-		if (currentMoveIndex < 0) {
-			return null;
-		}
-		if (currentMoveIndex == 0) {
-			setToZerothMove();
-			return null;
-		}
-		displayBoard = moves.get(--currentMoveIndex).displayBoard;
-		return moves.get(currentMoveIndex);
-	}
-
-	/**
-	 * Returns the last Move of the match and sets the displayBoard to that of
-	 * the move.
-	 * 
-	 * @return Last Move
-	 */
-	public Move getLastMove() {
-		if (ongoing) {
-			return null;
-		}
-		if (moves.isEmpty()) {
-			return null;
-		}
-		displayBoard = moves.get(moves.size() - 1).displayBoard;
-		currentMoveIndex = moves.size() - 1;
-		return moves.get(moves.size() - 1);
 	}
 
 	/**
@@ -223,11 +175,12 @@ public class Match {
 		this.title = title;
 	}
 
-	/**
-	 * @return true if match is ongoing. false otherwise.
-	 */
 	public Boolean isOngoing() {
-		return ongoing;
+		return engineBoard.matchCanContinue();
+	}
+
+	public WatchableMatch getWatchableMatch() {
+		return new WatchableMatch(title, moves, endStatus, new Date());
 	}
 
 	/**
@@ -267,5 +220,12 @@ public class Match {
 				}
 			}
 		}
+	}
+
+	private Point getPointFromString(String p) {
+		p = p.toLowerCase();
+		int x = p.charAt(0) - '0';
+		int y = p.charAt(1) - 'a';
+		return new Point(y, x);
 	}
 }

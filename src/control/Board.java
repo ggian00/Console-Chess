@@ -429,7 +429,7 @@ public class Board {
 					whitePieces.add(rook);
 
 					Move m = new Move();
-					m.setMove(origin, target, new Point(0, 0), new Point(3, 0));
+					m.setMove(origin, target, new Point(0, 0), new Point(3, 0), turn);
 
 					return m;
 
@@ -475,7 +475,7 @@ public class Board {
 					whitePieces.add(rook);
 
 					Move m = new Move();
-					m.setMove(origin, target, new Point(7, 0), new Point(5, 0));
+					m.setMove(origin, target, new Point(7, 0), new Point(5, 0), turn);
 
 					return m;
 				} else {
@@ -521,7 +521,7 @@ public class Board {
 					blackPieces.add(rook);
 
 					Move m = new Move();
-					m.setMove(origin, target, new Point(0, 7), new Point(3, 7));
+					m.setMove(origin, target, new Point(0, 7), new Point(3, 7), turn);
 
 					return m;
 				} else {
@@ -566,7 +566,7 @@ public class Board {
 					blackPieces.add(rook);
 
 					Move m = new Move();
-					m.setMove(origin, target, new Point(7, 7), new Point(5, 7));
+					m.setMove(origin, target, new Point(7, 7), new Point(5, 7), turn);
 
 					return m;
 				} else {
@@ -603,7 +603,7 @@ public class Board {
 					whitePieces.add(p);
 
 					Move m = new Move();
-					m.setMove(origin, target, null, null);
+					m.setMove(origin, target, null, null, turn);
 
 					return m;
 				} else {
@@ -631,7 +631,7 @@ public class Board {
 					blackPieces.add(p);
 
 					Move m = new Move();
-					m.setMove(origin, target, null, null);
+					m.setMove(origin, target, null, null, turn);
 
 					return m;
 				} else {
@@ -671,7 +671,7 @@ public class Board {
 				whitePieces.add(p);
 
 				Move m = new Move();
-				m.setMove(origin, target, null, null);
+				m.setMove(origin, target, null, null, turn);
 				m.promotionType = Character.toLowerCase(promotion);
 
 				return m;
@@ -700,7 +700,7 @@ public class Board {
 				blackPieces.add(p);
 
 				Move m = new Move();
-				m.setMove(origin, target, null, null);
+				m.setMove(origin, target, null, null, turn);
 				m.promotionType = Character.toLowerCase(promotion);
 
 				return m;
@@ -748,7 +748,7 @@ public class Board {
 		board[target.x][target.y] = p;
 
 		Move m = new Move();
-		m.setMove(origin, target, null, null);
+		m.setMove(origin, target, null, null, turn);
 
 		// EnPassant pawn was added that did not exist in previous state.
 		if (board == this.board && p instanceof Pawn && Math.abs(origin.y - target.y) == 2) {
