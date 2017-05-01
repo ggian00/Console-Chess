@@ -602,7 +602,7 @@ public class Board {
 					whitePieces.add(p);
 
 					Move m = new Move();
-					m.setMove(origin, target, null, null, turn);
+					m.setMove(origin, target, new Point(target.x, 4), null, turn);
 
 					return m;
 				} else {
@@ -630,7 +630,7 @@ public class Board {
 					blackPieces.add(p);
 
 					Move m = new Move();
-					m.setMove(origin, target, null, null, turn);
+					m.setMove(origin, target, new Point(target.x, 3), null, turn);
 
 					return m;
 				} else {

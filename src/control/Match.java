@@ -31,7 +31,7 @@ public class Match {
 	 */
 	public Match() {
 		engineBoard = new Board();
-		populateDisplayBoard();
+		displayBoard = populateDisplayBoard();
 	}
 
 	public void endMatch() {
@@ -78,7 +78,7 @@ public class Match {
 		}
 		engineBoard.undo();
 		if (currentMoveIndex == 0) {
-			populateDisplayBoard();
+			displayBoard = populateDisplayBoard();
 		} else {
 			displayBoard = moves.get(--currentMoveIndex).displayBoard;
 		}

@@ -26,6 +26,11 @@ public class Move {
 	 * No-arg constructor.
 	 */
 	Move() {
+
+	}
+
+	Move(String[][] defaultBoard) {
+		displayBoard = defaultBoard;
 	}
 
 	/**
@@ -185,9 +190,14 @@ public class Move {
 		}
 		displayBoard[(int) firstPieceOrigin.getX()][(int) firstPieceOrigin.getY()] = "";
 		if (secondPieceOrigin != null) {
-			displayBoard[(int) secondPieceTarget.getX()][(int) secondPieceTarget
-					.getY()] = displayBoard[(int) firstPieceOrigin.getX()][(int) firstPieceOrigin.getY()];
-			displayBoard[(int) secondPieceOrigin.getX()][(int) secondPieceOrigin.getY()] = "";
+			if (displayBoard[secondPieceOrigin.getX()][secondPieceOrigin.getY()].substring(1, 0).equals("p")) {
+				displayBoard[secondPieceOrigin.getX()][secondPieceOrigin.getY()] = "";
+			} else {
+				displayBoard[(int) secondPieceTarget.getX()][(int) secondPieceTarget
+						.getY()] = displayBoard[(int) firstPieceOrigin.getX()][(int) firstPieceOrigin.getY()];
+				displayBoard[(int) secondPieceOrigin.getX()][(int) secondPieceOrigin.getY()] = "";
+
+			}
 		}
 	}
 
