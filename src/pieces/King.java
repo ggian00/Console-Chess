@@ -1,6 +1,6 @@
 package pieces;
 
-import java.awt.Point;
+import control.Point;
 
 /**
  * 

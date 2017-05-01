@@ -1,6 +1,7 @@
 package control;
 
-import java.awt.Point;
+import control.Point;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
