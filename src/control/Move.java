@@ -140,13 +140,13 @@ public class Move {
 		ArrayList<String> promotables = new ArrayList<String>();
 		for (int i = 0; i < 8; i++) {
 			if (displayBoard[i][6].equals("wp")) {
-				promotables.add("6" + ('a' + i));
+				promotables.add("7" + ('a' + i));
 			}
 			if (displayBoard[i][1].equals("bp")) {
-				promotables.add("1" + ('a' + i));
+				promotables.add("2" + ('a' + i));
 			}
 		}
-		return null;
+		return promotables;
 	}
 
 	public char getTurn() {

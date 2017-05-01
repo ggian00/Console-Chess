@@ -189,7 +189,9 @@ public class Match {
 	/**
 	 * Sets the displayBoard to the initial setup of a chess board.
 	 */
-	private void populateDisplayBoard() {
+	private String[][] populateDisplayBoard() {
+
+		String[][] displayBoard;
 
 		displayBoard = new String[8][8];
 
@@ -223,6 +225,8 @@ public class Match {
 				}
 			}
 		}
+
+		return displayBoard;
 	}
 
 	private Point getPointFromString(String p) {
