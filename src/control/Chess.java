@@ -80,54 +80,40 @@ public class Chess {
 				continue;
 			}
 
-			while ((m.executeMove(origin, target, false, promotion)) == null) {
+			String strOrigin = Character.toString((char) ('0' + origin.y))
+					+ Character.toString((char) ('a' + origin.x));
+			String strTarget = Character.toString((char) ('0' + target.y))
+					+ Character.toString((char) ('a' + target.x));
+
+			while ((m.executeMove(strOrigin, strTarget, false, promotion)) == null) {
 				System.out.println("Illegal move, try again");
 				readMove();
 			}
 
 		} while (m.engineBoard.matchCanContinue());
-
-		String input = "";
-		m.setToZerothMove();
-
-		while (!input.equals("5")) {
-			System.out.println("1. First");
-			System.out.println("2. Prev");
-			System.out.println("3. Next");
-			System.out.println("4. Last");
-			System.out.println("5. Quit");
-			try {
-				input = reader.readLine();
-			} catch (IOException e) {
-				continue;
-			}
-			Move move = null;
-			if (input.equals("1")) {
-				m.setToZerothMove();
-				printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-				System.out.println();
-				continue;
-			} else if (input.equals("2")) {
-				move = m.getPrevMove();
-			} else if (input.equals("3")) {
-				move = m.getNextMove();
-			} else if (input.equals("4")) {
-				move = m.getLastMove();
-			}
-
-			if (move == null) {
-				System.out.println("Null move");
-				if (input.equals("2")) {
-					printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-					System.out.println();
-				}
-			} else {
-				System.out.println(move.toString());
-				printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-				System.out.println();
-			}
-
-		}
+		/**
+		 * String input = ""; m.setToZerothMove();
+		 * 
+		 * while (!input.equals("5")) { System.out.println("1. First");
+		 * System.out.println("2. Prev"); System.out.println("3. Next");
+		 * System.out.println("4. Last"); System.out.println("5. Quit"); try {
+		 * input = reader.readLine(); } catch (IOException e) { continue; } Move
+		 * move = null; if (input.equals("1")) { m.setToZerothMove();
+		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+		 * System.out.println(); continue; } else if (input.equals("2")) { move
+		 * = m.getPrevMove(); } else if (input.equals("3")) { move =
+		 * m.getNextMove(); } else if (input.equals("4")) { move =
+		 * m.getLastMove(); }
+		 * 
+		 * if (move == null) { System.out.println("Null move"); if
+		 * (input.equals("2")) {
+		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+		 * System.out.println(); } } else { System.out.println(move.toString());
+		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
+		 * System.out.println(); }
+		 * 
+		 * }
+		 **/
 	}
 
 	private static void printPiecesFromDisplayBoard(String[][] board) {

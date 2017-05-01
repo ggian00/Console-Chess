@@ -1,7 +1,5 @@
 package control;
 
-import control.Point;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -106,6 +104,9 @@ public class Match {
 				target, promotion);
 
 		if (move == null) {
+			if (moves.isEmpty()) {
+				return null;
+			}
 			return moves.get(currentMoveIndex);
 		}
 
@@ -225,8 +226,8 @@ public class Match {
 
 	private Point getPointFromString(String p) {
 		p = p.toLowerCase();
-		int x = p.charAt(0) - '0';
-		int y = p.charAt(1) - 'a';
-		return new Point(y, x);
+		int y = p.charAt(0) - '0';
+		int x = p.charAt(1) - 'a';
+		return new Point(x, y);
 	}
 }
