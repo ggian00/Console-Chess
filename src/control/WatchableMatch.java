@@ -25,7 +25,7 @@ public class WatchableMatch {
 	 */
 	public void setToZerothMove() {
 		populateDisplayBoard();
-		currentMoveIndex = -1;
+		currentMoveIndex = 0;
 	}
 
 	public String[][] start() {
