@@ -77,7 +77,7 @@ public class Chess {
 				undo = false;
 				continue;
 			} else if (AI) {
-				m.makeAIMove();
+				m.makeAIMove(false);
 				AI = false;
 				continue;
 			} else if (endEarly) {

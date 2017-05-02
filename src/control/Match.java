@@ -45,7 +45,7 @@ public class Match {
 	 * 
 	 * @return Move representation of the performed move
 	 */
-	public Move makeAIMove() {
+	public Move makeAIMove(boolean draw) {
 		char turn = engineBoard.getTurn();
 		Move ogMove = moves.get(currentMoveIndex);
 		Move move = null;
@@ -58,7 +58,7 @@ public class Match {
 				Point pOrigin = pieces.get(pieceNo).location;
 				String origin = String.valueOf(pOrigin.getY() + 1) + String.valueOf((char) ('a' + pOrigin.getX()));
 				String target = String.valueOf(point.getY() + 1) + String.valueOf((char) ('a' + point.getX()));
-				move = executeMove(origin, target, false, 'Q');
+				move = executeMove(origin, target, draw, 'Q');
 				if (move != null && move != ogMove) {
 					break;
 				}
