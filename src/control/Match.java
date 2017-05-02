@@ -96,7 +96,7 @@ public class Match {
 	 *            char indicating the desired promotion, if applicable
 	 * @return
 	 */
-	public Move executeMove(String o, String t, Boolean draw, char promotion) {
+	public Move executeMove(String o, String t, boolean draw, char promotion) {
 		Point origin = getPointFromString(o);
 		Point target = getPointFromString(t);
 		Move move = engineBoard.executeMove(engineBoard.board, engineBoard.whitePieces, engineBoard.blackPieces, origin,

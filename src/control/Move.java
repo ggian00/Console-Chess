@@ -19,7 +19,7 @@ public class Move {
 	char promotionType = '\0';
 	char check = '\0';
 	String[][] displayBoard = null;
-	Boolean pendingDraw = false;
+	boolean pendingDraw = false;
 	char turn = 'w';
 
 	/**
@@ -137,7 +137,7 @@ public class Move {
 		return displayBoard;
 	}
 
-	public Boolean hasPendingDraw() {
+	public boolean hasPendingDraw() {
 		return pendingDraw;
 	}
 
