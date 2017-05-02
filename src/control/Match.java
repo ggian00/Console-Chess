@@ -59,12 +59,12 @@ public class Match {
 				String origin = String.valueOf(pOrigin.getY() + 1) + String.valueOf((char) ('a' + pOrigin.getX()));
 				String target = String.valueOf(point.getY() + 1) + String.valueOf((char) ('a' + point.getX()));
 				move = executeMove(origin, target, false, 'Q');
-				if (move != ogMove) {
+				if (move != null && move != ogMove) {
 					break;
 				}
 			}
 			// Fix this.
-		} while (move == ogMove);
+		} while (move == null || move == ogMove);
 
 		return move;
 	}
