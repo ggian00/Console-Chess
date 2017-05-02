@@ -22,7 +22,7 @@ public class Match {
 	private String[][] displayBoard = new String[8][8];
 	private List<Move> moves = new ArrayList<Move>();
 	private String title;
-	private int currentMoveIndex = -1;
+	private int currentMoveIndex = 0;
 	private String endStatus;
 
 	/**
@@ -32,6 +32,7 @@ public class Match {
 	public Match() {
 		engineBoard = new Board();
 		displayBoard = populateDisplayBoard();
+		moves.add(new Move(populateDisplayBoard()));
 	}
 
 	public void endMatch() {
@@ -46,6 +47,7 @@ public class Match {
 	 */
 	public Move makeAIMove() {
 		char turn = engineBoard.getTurn();
+		Move ogMove = moves.get(currentMoveIndex);
 		Move move = null;
 		do {
 			ArrayList<Piece> pieces = (turn == 'w') ? engineBoard.whitePieces : engineBoard.blackPieces;
@@ -54,15 +56,15 @@ public class Match {
 			Collections.shuffle(moves);
 			for (Point point : moves) {
 				Point pOrigin = pieces.get(pieceNo).location;
-				String origin = String.valueOf(pOrigin.getX()) + String.valueOf('a' + pOrigin.getY());
-				String target = String.valueOf(point.getX()) + String.valueOf('a' + point.getY());
+				String origin = String.valueOf(pOrigin.getY() + 1) + String.valueOf((char) ('a' + pOrigin.getX()));
+				String target = String.valueOf(point.getY() + 1) + String.valueOf((char) ('a' + point.getX()));
 				move = executeMove(origin, target, false, 'Q');
-				if (move != null) {
+				if (move != ogMove) {
 					break;
 				}
 			}
 			// Fix this.
-		} while (move == null);
+		} while (move == ogMove);
 
 		return move;
 	}
@@ -73,15 +75,11 @@ public class Match {
 	 * @return true if successful, false otherwise
 	 */
 	public Move undo() {
-		if (moves.isEmpty()) {
-			return null;
+		if (currentMoveIndex == 0) {
+			return moves.get(currentMoveIndex);
 		}
 		engineBoard.undo();
-		if (currentMoveIndex == 0) {
-			displayBoard = populateDisplayBoard();
-		} else {
-			displayBoard = moves.get(--currentMoveIndex).displayBoard;
-		}
+		displayBoard = moves.get(--currentMoveIndex).displayBoard;
 		moves.remove(moves.size() - 1);
 		return moves.get(currentMoveIndex);
 	}
@@ -105,9 +103,6 @@ public class Match {
 				target, promotion);
 
 		if (move == null) {
-			if (moves.isEmpty()) {
-				return null;
-			}
 			return moves.get(currentMoveIndex);
 		}
 
