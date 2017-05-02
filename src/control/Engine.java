@@ -37,6 +37,9 @@ public class Engine {
 	}
 
 	public static WatchableMatch getMatchByIndex(int index) {
+		if (savedMatches.isEmpty()) {
+			return null;
+		}
 		return savedMatches.get(index);
 	}
 
