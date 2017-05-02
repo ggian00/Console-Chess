@@ -60,8 +60,7 @@ public class Chess {
 	public static void main(String args[]) {
 
 		System.out.println("Welcome to Chess.");
-		m = new Match();
-
+		m = Engine.startNewMatch("Quack");
 		do {
 
 			printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
@@ -91,7 +90,8 @@ public class Chess {
 
 		} while (m.engineBoard.matchCanContinue());
 		String input = "";
-		WatchableMatch wm = m.getWatchableMatch();
+		Engine.saveMatch();
+		WatchableMatch wm = Engine.getMatchByIndex(0);
 		printPiecesFromDisplayBoard(wm.start());
 
 		while (!input.equals("5")) {
