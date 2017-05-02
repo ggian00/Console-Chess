@@ -1,7 +1,6 @@
 package control;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Engine {
 
@@ -21,20 +20,20 @@ public class Engine {
 
 	public static ArrayList<String> getSortedTitles() {
 		savedMatches.sort((o1, o2) -> o1.getTitle().compareToIgnoreCase(o2.getTitle()));
+		return getTitles();
+	}
+
+	public static ArrayList<String> getSortedDates() {
+		savedMatches.sort((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
+		return getTitles();
+	}
+
+	private static ArrayList<String> getTitles() {
 		ArrayList<String> titles = new ArrayList<String>();
 		for (WatchableMatch m : savedMatches) {
 			titles.add(m.getTitle());
 		}
 		return titles;
-	}
-
-	public static ArrayList<Date> getSortedDates() {
-		savedMatches.sort((o1, o2) -> o1.getDate().compareTo(o2.getDate()));
-		ArrayList<Date> dates = new ArrayList<Date>();
-		for (WatchableMatch m : savedMatches) {
-			dates.add(m.getDate());
-		}
-		return dates;
 	}
 
 	public static WatchableMatch getMatchByIndex(int index) {
