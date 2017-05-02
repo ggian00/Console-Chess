@@ -156,6 +156,10 @@ public class Match {
 		return displayBoard;
 	}
 
+	public String getEndMessage() {
+		return endStatus;
+	}
+
 	/**
 	 * @return Title of the Match
 	 */
