@@ -91,6 +91,16 @@ public class Chess {
 		} while (m.engineBoard.matchCanContinue());
 		String input = "";
 		Engine.saveMatch();
+
+		try {
+			Engine.saveState();
+			Engine.savedMatches = null;
+			Engine.load();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+
 		WatchableMatch wm = Engine.getMatchByIndex(0);
 		printPiecesFromDisplayBoard(wm.start());
 

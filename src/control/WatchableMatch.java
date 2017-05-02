@@ -1,9 +1,16 @@
 package control;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class WatchableMatch {
+public class WatchableMatch implements Serializable {
+
+	/**
+	 * Default Serial Version
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String[][] displayBoard = new String[8][8];
 	private ArrayList<Move> moves = new ArrayList<Move>();

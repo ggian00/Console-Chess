@@ -1,6 +1,15 @@
 package control;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
+
+	/**
+	 * Default Serial Version
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public int x;
 	public int y;
 
