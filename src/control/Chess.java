@@ -48,9 +48,11 @@ public class Chess {
 	 */
 	public static char promotion = 'Q';
 
-	private static Boolean undo = false;
+	private static boolean undo = false;
 
-	private static Boolean AI = false;
+	private static boolean AI = false;
+
+	private static boolean endEarly = false;
 
 	/**
 	 * Main
@@ -78,6 +80,8 @@ public class Chess {
 				m.makeAIMove();
 				AI = false;
 				continue;
+			} else if (endEarly) {
+				break;
 			}
 
 			while ((m.executeMove(origin, target, false, promotion)) == null) {
@@ -86,29 +90,36 @@ public class Chess {
 			}
 
 		} while (m.engineBoard.matchCanContinue());
-		/**
-		 * String input = ""; m.setToZerothMove();
-		 * 
-		 * while (!input.equals("5")) { System.out.println("1. First");
-		 * System.out.println("2. Prev"); System.out.println("3. Next");
-		 * System.out.println("4. Last"); System.out.println("5. Quit"); try {
-		 * input = reader.readLine(); } catch (IOException e) { continue; } Move
-		 * move = null; if (input.equals("1")) { m.setToZerothMove();
-		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-		 * System.out.println(); continue; } else if (input.equals("2")) { move
-		 * = m.getPrevMove(); } else if (input.equals("3")) { move =
-		 * m.getNextMove(); } else if (input.equals("4")) { move =
-		 * m.getLastMove(); }
-		 * 
-		 * if (move == null) { System.out.println("Null move"); if
-		 * (input.equals("2")) {
-		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-		 * System.out.println(); } } else { System.out.println(move.toString());
-		 * printPiecesFromDisplayBoard(m.getCurrentDisplayBoard());
-		 * System.out.println(); }
-		 * 
-		 * }
-		 **/
+		String input = "";
+		WatchableMatch wm = m.getWatchableMatch();
+		printPiecesFromDisplayBoard(wm.start());
+
+		while (!input.equals("5")) {
+			System.out.println("1. First");
+			System.out.println("2. Prev");
+			System.out.println("3. Next");
+			System.out.println("4. Last");
+			System.out.println("5. Quit");
+			try {
+				input = reader.readLine();
+			} catch (IOException e) {
+				continue;
+			}
+			String[][] move = null;
+			if (input.equals("2")) {
+				move = wm.getPrevMove();
+			} else if (input.equals("3")) {
+				move = wm.getNextMove();
+			}
+
+			if (move == null) {
+				System.out.println("Null move");
+			} else {
+				printPiecesFromDisplayBoard(move);
+				System.out.println();
+			}
+
+		}
 	}
 
 	private static void printPiecesFromDisplayBoard(String[][] board) {
@@ -147,6 +158,9 @@ public class Chess {
 			return;
 		} else if (input.equalsIgnoreCase("AI")) {
 			AI = true;
+			return;
+		} else if (input.equalsIgnoreCase("end")) {
+			endEarly = true;
 			return;
 		}
 
