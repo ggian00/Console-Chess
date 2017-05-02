@@ -145,10 +145,10 @@ public class Move {
 		ArrayList<String> promotables = new ArrayList<String>();
 		for (int i = 0; i < 8; i++) {
 			if (displayBoard[i][6].equals("wp")) {
-				promotables.add("7" + ('a' + i));
+				promotables.add("7" + ((char) ('a' + i)));
 			}
 			if (displayBoard[i][1].equals("bp")) {
-				promotables.add("2" + ('a' + i));
+				promotables.add("2" + ((char) ('a' + i)));
 			}
 		}
 		return promotables;
